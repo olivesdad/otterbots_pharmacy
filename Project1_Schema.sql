@@ -18,10 +18,11 @@ USE `OtterBot_Pharma` ;
 -- Table `OtterBot_Pharma`.`doctor`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`doctor` (
-  `ssn` VARCHAR(9) NOT NULL,
-  `license_date` DATE NOT NULL,
+  `doctorssn` VARCHAR(9) NOT NULL,
+  `licensedate` DATE NOT NULL,
   `specialty` VARCHAR(45) NULL,
-  PRIMARY KEY (`ssn`))
+  `doctorname` VARCHAR(45) NULL,
+  PRIMARY KEY (`doctorssn`))
 ENGINE = InnoDB;
 
 
@@ -29,26 +30,27 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`patient`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`patient` (
-  `ssn` VARCHAR(9) NOT NULL,
-  `primary_care_giver` VARCHAR(11) NOT NULL,
-  `patient_name` VARCHAR(45) NOT NULL,
+  `patientssn` VARCHAR(9) NOT NULL,
+  `doctorssn` VARCHAR(11) NOT NULL,
+  `patientname` VARCHAR(45) NOT NULL,
   `dob` DATE NOT NULL,
-  PRIMARY KEY (`ssn`),
+  `address` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`patientssn`),
   CONSTRAINT `pimary_care_giver`
-    FOREIGN KEY (`primary_care_giver`)
-    REFERENCES `OtterBot_Pharma`.`doctor` (`ssn`)
+    FOREIGN KEY (`doctorssn`)
+    REFERENCES `OtterBot_Pharma`.`doctor` (`doctorssn`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `OtterBot_Pharma`.`pharm_company`
+-- Table `OtterBot_Pharma`.`pharmcompany`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`pharm_company` (
-  `name` VARCHAR(50) NOT NULL,
-  `phone_number` VARCHAR(10) NOT NULL,
-  PRIMARY KEY (`name`))
+CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`pharmcompany` (
+  `pharmcompanyname` VARCHAR(50) NOT NULL,
+  `phonenumber` VARCHAR(10) NOT NULL,
+  PRIMARY KEY (`pharmcompanyname`))
 ENGINE = InnoDB;
 
 
@@ -57,12 +59,12 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`drug` (
   `name` VARCHAR(50) NOT NULL,
-  `pharm_company_name` VARCHAR(50) NOT NULL,
-  `generic_formula` VARCHAR(50) NOT NULL,
+  `pharmcompanyname` VARCHAR(50) NOT NULL,
+  `genericformula` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`name`),
   CONSTRAINT `fk_Drug_Supplier1`
-    FOREIGN KEY (`pharm_company_name`)
-    REFERENCES `OtterBot_Pharma`.`pharm_company` (`name`)
+    FOREIGN KEY (`pharmcompanyname`)
+    REFERENCES `OtterBot_Pharma`.`pharmcompany` (`pharmcompanyname`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -83,12 +85,12 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`rxprice`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`rxprice` (
-  `pharmacy_phone_number` VARCHAR(10) NOT NULL,
+  `pharmacyphonenumber` VARCHAR(10) NOT NULL,
   `drug_name` VARCHAR(50) NOT NULL,
   `price` DECIMAL(7,2) NOT NULL,
-  PRIMARY KEY (`drug_name`, `pharmacy_phone_number`),
+  PRIMARY KEY (`drug_name`, `pharmacyphonenumber`),
   CONSTRAINT `fk_Pharmacy_has_Drug_Pharmacy1`
-    FOREIGN KEY (`pharmacy_phone_number`)
+    FOREIGN KEY (`pharmacyphonenumber`)
     REFERENCES `OtterBot_Pharma`.`pharmacy` (`phone_number`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
@@ -104,31 +106,31 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`rx`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`rx` (
-  `rx_number` INT NOT NULL AUTO_INCREMENT,
-  `patient_ssn` VARCHAR(11) NOT NULL,
-  `drug_name` VARCHAR(45) NOT NULL,
-  `doctor_ssn` VARCHAR(9) NOT NULL,
+  `rxnumber` INT NOT NULL AUTO_INCREMENT,
+  `patientssn` VARCHAR(11) NOT NULL,
+  `drugname` VARCHAR(45) NOT NULL,
+  `doctorssn` VARCHAR(9) NOT NULL,
   `quantity` INT NOT NULL,
-  `filled_by` VARCHAR(10) NOT NULL,
-  `filled_date` DATE NULL,
-  PRIMARY KEY (`rx_number`),
+  `pharmacyphonenumber` VARCHAR(10) NOT NULL,
+  `filleddate` DATE NULL,
+  PRIMARY KEY (`rxnumber`),
   CONSTRAINT `fk_Patient_has_Doctor_Patient1`
-    FOREIGN KEY (`patient_ssn`)
-    REFERENCES `OtterBot_Pharma`.`patient` (`ssn`)
+    FOREIGN KEY (`patientssn`)
+    REFERENCES `OtterBot_Pharma`.`patient` (`patientssn`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Patient_has_Doctor_Doctor1`
-    FOREIGN KEY (`doctor_ssn`)
-    REFERENCES `OtterBot_Pharma`.`doctor` (`ssn`)
+    FOREIGN KEY (`doctorssn`)
+    REFERENCES `OtterBot_Pharma`.`doctor` (`doctorssn`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Prescription_Pharmacy1`
-    FOREIGN KEY (`filled_by`)
+    FOREIGN KEY (`pharmacyphonenumber`)
     REFERENCES `OtterBot_Pharma`.`pharmacy` (`phone_number`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Prescription_Drug1`
-    FOREIGN KEY (`drug_name`)
+    FOREIGN KEY (`drugname`)
     REFERENCES `OtterBot_Pharma`.`drug` (`name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -139,9 +141,9 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`supervisor`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`supervisor` (
-  `supervisor_id` INT NOT NULL AUTO_INCREMENT,
+  `supervisorid` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`supervisor_id`))
+  PRIMARY KEY (`supervisorid`))
 ENGINE = InnoDB;
 
 
@@ -149,27 +151,27 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`contract`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`contract` (
-  `pharmacy_phone_number` VARCHAR(10) NOT NULL,
-  `pharm_company_name` VARCHAR(50) NOT NULL,
-  `supervisor_id` INT NOT NULL,
-  `end_date` DATE NOT NULL,
-  `start_date` DATE NOT NULL,
-  PRIMARY KEY (`pharmacy_phone_number`, `pharm_company_name`),
+  `pharmacyphonenumber` VARCHAR(10) NOT NULL,
+  `pharmcompanyname` VARCHAR(50) NOT NULL,
+  `supervisorid` INT NOT NULL,
+  `enddate` DATE NOT NULL,
+  `startdate` DATE NOT NULL,
+  PRIMARY KEY (`pharmacyphonenumber`, `pharmcompanyname`),
   CONSTRAINT `fk_Pharmacy_has_pharm_company_Pharmacy1`
-    FOREIGN KEY (`pharmacy_phone_number`)
+    FOREIGN KEY (`pharmacyphonenumber`)
     REFERENCES `OtterBot_Pharma`.`pharmacy` (`phone_number`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Pharmacy_has_pharm_company_pharm_company1`
-    FOREIGN KEY (`pharm_company_name`)
-    REFERENCES `OtterBot_Pharma`.`pharm_company` (`name`)
+    FOREIGN KEY (`pharmcompanyname`)
+    REFERENCES `OtterBot_Pharma`.`pharmcompany` (`pharmcompanyname`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_Pharmacy_has_pharm_company_table11`
-    FOREIGN KEY (`supervisor_id`)
-    REFERENCES `OtterBot_Pharma`.`supervisor` (`supervisor_id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    FOREIGN KEY (`supervisorid`)
+    REFERENCES `OtterBot_Pharma`.`supervisor` (`supervisorid`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
 
