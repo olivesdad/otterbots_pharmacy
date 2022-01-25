@@ -180,3 +180,37 @@ ENGINE = InnoDB;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+-- SQL statement 1 --
+SELECT p.patientname, p.doctorssn, d.doctorname, rx.price
+FROM patient p,doctor d,rxprice rx
+ORDER BY patientname ;
+
+-- SQL statement 2 --
+SELECT drugtradename,price
+FROM rxprice
+WHERE price= (SELECT MIN(price) FROM rxprice)
+ORDER BY price;
+
+-- SQL statement 3 ---
+SELECT patientname,patientssn, d.doctorssn, d.doctorname, d.specialty
+FROM patient, doctor d
+WHERE d.doctorssn IN (SELECT d.doctorssn
+FROM doctor d
+WHERE specialty = "Pediatrics");
+
+-- SQL statement 4 --
+SELECT r.drugtradename, r.price, p.pharmacyphone
+FROM prescription p
+JOIN drug d on p.drugtradename = d.drugtradename
+JOIN rxprice r on d.drugtradename = r.drugtradename
+WHERE p.filleddate IS NOT NULL
+ORDER BY r.drugtradename;
+
+-- SQL statement 5 --
+SELECT patientname, doctorname, drug.drugtradename
+FROM prescription rx
+JOIN patient p ON rx.patientssn = p.patientssn
+JOIN doctor d ON rx.doctorssn = d.doctorssn
+JOIN drug ON rx.drugtradename = drug.drugtradename
+WHERE filleddate IS NULL;
