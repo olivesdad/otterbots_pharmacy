@@ -108,8 +108,8 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`prescription` (
   `rxnumber` INT NOT NULL AUTO_INCREMENT,
-  `patientssn` VARCHAR(11) NOT NULL,
-  `doctorssn` VARCHAR(11) NOT NULL,
+  `patientssn` CHAR(11) NOT NULL,
+  `doctorssn`  CHAR(11) NOT NULL,
   `drugtradename` VARCHAR(45) NOT NULL,
   `quantity` INT NOT NULL,
   `pharmacyphone` VARCHAR(10) NULL,
