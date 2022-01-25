@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`rxprice` (
   `pharmacyphone` VARCHAR(10) NOT NULL,
   `drugtradename` VARCHAR(45) NOT NULL,
   `price` DECIMAL(7,2) NOT NULL,
-   CHECK (price > 0),
+   CHECK (price > 0 AND price < 100000),
   PRIMARY KEY (`drugtradename`, `pharmacyphone`),
   CONSTRAINT `fk_rxprice_pharmacyphone`
     FOREIGN KEY (`pharmacyphone`)
