@@ -18,7 +18,7 @@ USE `OtterBot_Pharma` ;
 -- Table `OtterBot_Pharma`.`doctor`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`doctor` (
-  `doctorssn` VARCHAR(11) NOT NULL,
+  `doctorssn` CHAR(11) NOT NULL,
   `doctorname` VARCHAR(45) NOT NULL,
   `specialty` VARCHAR(45) NOT NULL,
   `licensedate` DATE NOT NULL,
@@ -30,11 +30,11 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`patient`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`patient` (
-  `patientssn` VARCHAR(11) NOT NULL,
+  `patientssn` CHAR(11) NOT NULL,
   `patientname` VARCHAR(45) NOT NULL,
   `dob` DATE NOT NULL,
   `address` VARCHAR(45) NOT NULL,
-  `doctorssn` VARCHAR(11) NOT NULL,
+  `doctorssn` CHAR(11) NOT NULL,
   PRIMARY KEY (`patientssn`),
   CONSTRAINT `fk_patient_doctor`
     FOREIGN KEY (`doctorssn`)
@@ -49,7 +49,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`pharmcompany` (
   `pharmcompanyname` VARCHAR(25) NOT NULL,
-  `phone` VARCHAR(10) NOT NULL,
+  `phone` CHAR(10) NOT NULL,
   PRIMARY KEY (`pharmcompanyname`))
 ENGINE = InnoDB;
 
@@ -74,7 +74,7 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`pharmacy`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`pharmacy` (
-  `pharmacyphone` VARCHAR(10) NOT NULL,
+  `pharmacyphone` CHAR(10) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `address` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`pharmacyphone`))
@@ -85,11 +85,11 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`rxprice`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`rxprice` (
-  `pharmacyphone` VARCHAR(10) NOT NULL,
+  `pharmacyphone` CHAR(10) NOT NULL,
   `drugtradename` VARCHAR(45) NOT NULL,
   `price` DECIMAL(7,2) NOT NULL,
-   CHECK (price > 0 AND price < 100000),
   PRIMARY KEY (`drugtradename`, `pharmacyphone`),
+  CONSTRAINT price_chk CHECK ( price > 0 AND price <100000 ),
   CONSTRAINT `fk_rxprice_pharmacyphone`
     FOREIGN KEY (`pharmacyphone`)
     REFERENCES `OtterBot_Pharma`.`pharmacy` (`pharmacyphone`)
@@ -152,7 +152,7 @@ ENGINE = InnoDB;
 -- Table `OtterBot_Pharma`.`contract`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`contract` (
-  `pharmacyphone` VARCHAR(10) NOT NULL,
+  `pharmacyphone` CHAR(10) NOT NULL,
   `pharmcompanyname` VARCHAR(25) NOT NULL,
   `supervisorid` INT NOT NULL,
   `contractualterm` VARCHAR(45) NOT NULL,
