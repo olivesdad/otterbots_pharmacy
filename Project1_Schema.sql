@@ -117,8 +117,8 @@ CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`prescription` (
   `quantity` INT NOT NULL,
   `pharmacyphone` VARCHAR(10) NULL,
   `filleddate` DATE NULL,
-  `patient_patientid` INT NOT NULL,
-  PRIMARY KEY (`rxnumber`, `doctor_doctorid`, `patient_patientid`),
+  `patientid` INT NOT NULL,
+  PRIMARY KEY (`rxnumber`, `doctor_doctorid`, `patientid`),
   CONSTRAINT `fk_prescription_pharmacyphone`
     FOREIGN KEY (`pharmacyphone`)
     REFERENCES `OtterBot_Pharma`.`pharmacy` (`pharmacyphone`)
@@ -135,7 +135,7 @@ CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`prescription` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
   CONSTRAINT `fk_prescription_patientid`
-    FOREIGN KEY (`patient_patientid`)
+    FOREIGN KEY (`patientid`)
     REFERENCES `OtterBot_Pharma`.`patient` (`patientid`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

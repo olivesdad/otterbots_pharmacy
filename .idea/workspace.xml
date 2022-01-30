@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9c345fb9-f4bf-478a-b271-49175418c0ee" name="Changes" comment="" />
+    <list default="true" id="9c345fb9-f4bf-478a-b271-49175418c0ee" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project1.mwb.bak" beforeDir="false" afterPath="$PROJECT_DIR$/Project1.mwb.bak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Project1_Schema.sql" beforeDir="false" afterPath="$PROJECT_DIR$/Project1_Schema.sql" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -18,17 +22,36 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="mariadb" />
-    <property name="RunConfigurationTargetLRU" value="94bd678c-738f-4fd6-8a03-b9cdae91aeaa" />
+    <property name="RunConfigurationTargetLRU" value="94bd678c-738f-4fd6-8a03-b9cdae91aeaa&#10;0c4f8d3c-4ad1-4bff-8965-bea164c007d3&#10;0c4f8d3c-4ad1-4bff-8965-bea164c007d3/schema/&quot;information_schema&quot;" />
     <property name="RunOnceActivity.OpenDatabaseViewOnStart" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="database.data.extractors.current.export.id" value="Pipe-separated_id" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Project1_Schema.sql" />
   </component>
-  <component name="RunManager" selected="Database Script.testQuery.sql">
+  <component name="RunManager" selected="Database Script.Project1_Schema.sql">
     <configuration name="Project1_Schema.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/Project1_Schema.sql" />
       <script-mode>FILE</script-mode>
-      <data-source id="94bd678c-738f-4fd6-8a03-b9cdae91aeaa" />
+      <data-source id="0c4f8d3c-4ad1-4bff-8965-bea164c007d3" namespace="schema/&quot;information_schema&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Project1_p2_schema.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$PROJECT_DIR$/Project1_p2_schema.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="0c4f8d3c-4ad1-4bff-8965-bea164c007d3" />
+      <method v="2" />
+    </configuration>
+    <configuration name="assignment_3_schema.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$USER_HOME$/CST_363/WK3/assignment_3_schema.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="0c4f8d3c-4ad1-4bff-8965-bea164c007d3" />
+      <method v="2" />
+    </configuration>
+    <configuration name="exam1_hafhmore.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
+      <script-file value="$USER_HOME$/CST_363/WK4/exam1_hafhmore.sql" />
+      <script-mode>FILE</script-mode>
+      <data-source id="0c4f8d3c-4ad1-4bff-8965-bea164c007d3" />
       <method v="2" />
     </configuration>
     <configuration name="testQuery.sql" type="DatabaseScript" editBeforeRun="true" temporary="true" nameIsGenerated="true">
@@ -38,8 +61,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Database Script.testQuery.sql" />
         <item itemvalue="Database Script.Project1_Schema.sql" />
+        <item itemvalue="Database Script.Project1_p2_schema.sql" />
+        <item itemvalue="Database Script.exam1_hafhmore.sql" />
+        <item itemvalue="Database Script.assignment_3_schema.sql" />
+        <item itemvalue="Database Script.testQuery.sql" />
       </list>
     </recent_temporary>
   </component>
