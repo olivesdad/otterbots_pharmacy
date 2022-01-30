@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`doctor` (
   `doctorname` VARCHAR(45) NOT NULL,
   `specialty` VARCHAR(45) NOT NULL,
   `licensedate` DATE NOT NULL,
-  PRIMARY KEY (`doctoid`))
+  PRIMARY KEY (`doctorid`))
 ENGINE = InnoDB;
 
 
