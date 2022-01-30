@@ -112,13 +112,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`prescription` (
   `rxnumber` INT NOT NULL AUTO_INCREMENT,
-  `doctor_doctorid` INT NOT NULL,
+  `doctorid` INT NOT NULL,
   `drugtradename` VARCHAR(45) NOT NULL,
   `quantity` INT NOT NULL,
   `pharmacyphone` VARCHAR(10) NULL,
   `filleddate` DATE NULL,
   `patientid` INT NOT NULL,
-  PRIMARY KEY (`rxnumber`, `doctor_doctorid`, `patientid`),
+  PRIMARY KEY (`rxnumber`, `doctorid`, `patientid`),
   CONSTRAINT `fk_prescription_pharmacyphone`
     FOREIGN KEY (`pharmacyphone`)
     REFERENCES `OtterBot_Pharma`.`pharmacy` (`pharmacyphone`)
@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`prescription` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
   CONSTRAINT `fk_prescription_doctorid`
-    FOREIGN KEY (`doctor_doctorid`)
+    FOREIGN KEY (`doctorid`)
     REFERENCES `OtterBot_Pharma`.`doctor` (`doctorid`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
