@@ -19,7 +19,7 @@ USE `OtterBot_Pharma` ;
 -- Table `OtterBot_Pharma`.`doctor`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`doctor` (
-  `doctoid` INT NOT NULL AUTO_INCREMENT,
+  `doctorid` INT NOT NULL AUTO_INCREMENT,
   `doctorssn` CHAR(11) NOT NULL,
   `doctorname` VARCHAR(45) NOT NULL,
   `specialty` VARCHAR(45) NOT NULL,
@@ -37,11 +37,11 @@ CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`patient` (
   `patientname` VARCHAR(45) NOT NULL,
   `dob` DATE NOT NULL,
   `address` VARCHAR(45) NOT NULL,
-  `doctoid` INT NOT NULL,
+  `doctorid` INT NOT NULL,
   PRIMARY KEY (`patientid`),
   CONSTRAINT `fk_patient_doctorid`
-    FOREIGN KEY (`doctoid`)
-    REFERENCES `OtterBot_Pharma`.`doctor` (`doctoid`)
+    FOREIGN KEY (`doctorid`)
+    REFERENCES `OtterBot_Pharma`.`doctor` (`doctorid`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
 ENGINE = InnoDB;
@@ -112,13 +112,13 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`prescription` (
   `rxnumber` INT NOT NULL AUTO_INCREMENT,
-  `doctor_doctoid` INT NOT NULL,
+  `doctor_doctorid` INT NOT NULL,
   `drugtradename` VARCHAR(45) NOT NULL,
   `quantity` INT NOT NULL,
   `pharmacyphone` VARCHAR(10) NULL,
   `filleddate` DATE NULL,
   `patient_patientid` INT NOT NULL,
-  PRIMARY KEY (`rxnumber`, `doctor_doctoid`, `patient_patientid`),
+  PRIMARY KEY (`rxnumber`, `doctor_doctorid`, `patient_patientid`),
   CONSTRAINT `fk_prescription_pharmacyphone`
     FOREIGN KEY (`pharmacyphone`)
     REFERENCES `OtterBot_Pharma`.`pharmacy` (`pharmacyphone`)
@@ -130,8 +130,8 @@ CREATE TABLE IF NOT EXISTS `OtterBot_Pharma`.`prescription` (
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
   CONSTRAINT `fk_prescription_doctorid`
-    FOREIGN KEY (`doctor_doctoid`)
-    REFERENCES `OtterBot_Pharma`.`doctor` (`doctoid`)
+    FOREIGN KEY (`doctor_doctorid`)
+    REFERENCES `OtterBot_Pharma`.`doctor` (`doctorid`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT,
   CONSTRAINT `fk_prescription_patientid`
