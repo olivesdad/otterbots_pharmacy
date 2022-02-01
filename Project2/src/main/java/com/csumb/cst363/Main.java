@@ -8,8 +8,10 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) {
-        // String s = getName("fnames.txt", 4945);
-        System.out.println(getFullName());
+        for (int i = 0 ; i < 500 ; i++) {
+            System.out.println(getFullName() + " SSN:" + randomSSN() +
+                    " BDAY:" + randomBday() + " ZIP:" +  randomZip());
+        }
     }
 
     //Call getName twice on firstname and lastname text files to get a name
@@ -38,5 +40,30 @@ public class Main {
             System.out.printf(e.toString());
         }
         return s;
+    }
+
+    //generate random birthdate format is YYYY-MM-DD
+    public static String randomBday(){
+        StringBuilder s = new StringBuilder();
+        //year first
+         s.append((new Random().nextInt(122) +1900) + "-") ;
+         s.append(String.format("%02d", new Random().nextInt(11) + 1) +"-");
+         s.append(String.format("%02d", new Random().nextInt(30) +1 ));
+
+        return s.toString();
+    }
+
+    //generate random zip
+    public static int randomZip(){
+        return new Random().nextInt(89999) + 10000;
+    }
+
+    //generate random ssn
+    public static String randomSSN(){
+        StringBuilder s = new StringBuilder();
+        s.append((new Random().nextInt(799) + 100)+"-"); //first 3 digits
+        s.append(String.format("%02d", new Random().nextInt(98)+1)+"-"); //middle
+        s.append(String.format("%04d", new Random().nextInt(9998)+1));
+        return s.toString();
     }
 }
