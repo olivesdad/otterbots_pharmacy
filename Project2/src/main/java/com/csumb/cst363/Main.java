@@ -23,19 +23,38 @@ public class Main {
 
     public static void main(String[] args) {
         List <Patient>patients  = new ArrayList<>();
+        List <Doctor> doctors = new ArrayList<>();
 
-        for (int i = 0 ; i < 100 ; i++) { //loop to do something 500 times
-           // System.out.println(randomFullName() + " SSN:" + randomSSN() +
-                 //   " BDAY:" + randomBday() +" ADDY:" + randomAddress() + " STATE: "+ getRandomLine(stateFIle, stateLines)+" ZIP:" +  randomZip());
-            patients.add(getPatiant(i+1));
+        //create 10 random doctors in doctors list
+        for (int i = 0; i < 10; i++){
+            doctors.add(getDoctor(i+1));
         }
-        for (Patient p : patients){
+        //create 500 random patients, use doctors list to populate primary id and primary name
+        for (int i = 0 ; i < 500 ; i++) {
+            //populate patients list with 500 random generated patients
+            patients.add(getPatiant(i+1, doctors.get(new Random().nextInt(doctors.size()-1))));
+        }
+
+        for (Patient p : patients){ //diag to print patients
             System.out.println(p.toString());
+        }
+        for (Doctor d : doctors){ //print doctors
+            System.out.println(d.toString());
         }
     }
 
+    //generate a doctor
+    public static Doctor getDoctor(int id){
+        Doctor doc = new Doctor();
+        doc.setId(id);
+        doc.setName(randomFullName());
+        doc.setSsn(randomSSN());
+        doc.setSpecialty(randomSpecialty());
+        doc.setPractice_since_year((new Random().nextInt(122)+1900)+"");
+        return doc;
+    }
     //generate a patient
-    public static Patient getPatiant(int id){
+    public static Patient getPatiant(int id, Doctor primary){
         Patient p = new Patient();
         //populate all fields
         p.setPatientId(id +"");
@@ -46,6 +65,8 @@ public class Main {
         p.setSsn(randomSSN());
         p.setZipcode(randomZip());
         p.setCity(getRandomLine(citiesFile, cityLines));
+        p.setPrimaryID(primary.getId());
+        p.setPrimaryName(primary.getName());
 
         return p;
     }
@@ -108,4 +129,16 @@ public class Main {
         s.append(String.format("%04d", new Random().nextInt(9998)+1));
         return s.toString();
     }
+
+    //generate random speciality
+    public static String randomSpecialty(){
+
+        String[] specialties = { "Internal Medicine",
+                "Family Medicine", "Pediatrics", "Orthopedics",
+                "Dermatology",  "Cardiology", "Gynecology",
+                "Gastroenterology", "Psychiatry", "Oncology" };
+        return specialties[new Random().nextInt(specialties.length)];
+
+    }
+
 }
