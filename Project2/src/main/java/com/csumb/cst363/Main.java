@@ -7,23 +7,38 @@ import java.util.Scanner;
 
 public class Main {
 
+    public static final String fNameFile = "fnames.txt";
+    public static final int fNameLines = 4940;
+    public static final String lastNameFile = "lnames.txt";
+    public static final int lnameLines = 21985;
+    public static final String stateFIle = "states.txt";
+    public static final int stateLines = 51;
+    public static final String streetFile = "streets.txt";
+    public static final int streetLines = 500;
+
     public static void main(String[] args) {
         for (int i = 0 ; i < 500 ; i++) {
             System.out.println(getFullName() + " SSN:" + randomSSN() +
-                    " BDAY:" + randomBday() + " ZIP:" +  randomZip());
+                    " BDAY:" + randomBday() +" ADDY:" + getAddress() + " STATE: "+ getRandomLine(stateFIle, stateLines)+" ZIP:" +  randomZip());
         }
     }
 
     //Call getName twice on firstname and lastname text files to get a name
     public static String getFullName(){
         StringBuilder name = new StringBuilder();
-        name.append(getName("fnames.txt", 4940));
-        name.append(" ").append(getName("lnames.txt", 21985));
+        name.append(getRandomLine(fNameFile, fNameLines));
+        name.append(" ").append(getRandomLine(lastNameFile, lnameLines));
         return  name.toString();
     }
 
+    public static String getAddress(){
+        StringBuilder s = new StringBuilder();
+        s.append((new Random().nextInt(9998)+1)+" ").append(getRandomLine(streetFile, streetLines));
+        return s.toString();
+    }
+
     //takes filename of random names file and the linecount returns a random slection
-    public static String getName(String fileLocation, int numLines){
+    public static String getRandomLine(String fileLocation, int numLines){
         File file = new File(fileLocation);
         Scanner scanner = null;
         String s = "";
