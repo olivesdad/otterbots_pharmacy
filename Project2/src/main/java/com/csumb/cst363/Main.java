@@ -20,19 +20,34 @@ public class Main {
     public static final int streetLines = 500;
     public static final String citiesFile = "cities.txt";
     public static final int cityLines = 385;
+    public static final String drugFile = "drug.txt";
+    public static final int drugLines = 99;
 
+    //Constants for number of patients, doctors and scripts
+    public static final int doctorCount = 10;
+    public static final int patientCount = 500;
+    public static final int scriptCount = 1000;
+
+    //Main driver
     public static void main(String[] args) {
         List <Patient>patients  = new ArrayList<>();
         List <Doctor> doctors = new ArrayList<>();
+        List <Prescription> prescriptions = new ArrayList<>();
 
         //create 10 random doctors in doctors list
-        for (int i = 0; i < 10; i++){
+        for (int i = 0; i < doctorCount; i++){
             doctors.add(getDoctor(i+1));
         }
         //create 500 random patients, use doctors list to populate primary id and primary name
-        for (int i = 0 ; i < 500 ; i++) {
+        for (int i = 0 ; i < patientCount ; i++) {
             //populate patients list with 500 random generated patients
             patients.add(getPatiant(i+1, doctors.get(new Random().nextInt(doctors.size()-1))));
+        }
+        //create random prescriptions
+        for (int i =0 ; i < scriptCount; i++){
+            int p =new Random().nextInt(patientCount -1) +1 ;
+            int d = new Random().nextInt(doctorCount - 1) +1;
+            prescriptions.add(getPrescription(doctors.get(d), patients.get(p)));
         }
 
         for (Patient p : patients){ //diag to print patients
@@ -41,6 +56,21 @@ public class Main {
         for (Doctor d : doctors){ //print doctors
             System.out.println(d.toString());
         }
+        for (Prescription p : prescriptions){
+            System.out.println(p.toString());
+        }
+    }//END MAIN
+
+    public static Prescription getPrescription(Doctor doctor, Patient patient){
+        Prescription prescription = new Prescription();
+
+        prescription.setDrugName(getRandomLine(drugFile, drugLines));
+        prescription.setQuantity(new Random().nextInt(100));
+        prescription.setPatientName(patient.getName());
+        prescription.setPatient_ssn(patient.getSsn());
+        prescription.setDoctorName(doctor.getName());
+        prescription.setDoctor_ssn(doctor.getSsn());
+        return prescription;
     }
 
     //generate a doctor
