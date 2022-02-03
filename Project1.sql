@@ -64,13 +64,7 @@ CREATE TABLE IF NOT EXISTS `pharmacy`.`drug` (
   `drug_id` INT NOT NULL AUTO_INCREMENT,
   `trade_name` VARCHAR(45) NOT NULL,
   `formula` VARCHAR(45) NOT NULL,
-  `pharm_id` INT NOT NULL,
-  PRIMARY KEY (`drug_id`),
-  CONSTRAINT `fk_drug_pharmid`
-    FOREIGN KEY (`pharm_id`)
-    REFERENCES `pharmacy`.`pharmcompany` (`pharm_co_id`)
-    ON DELETE RESTRICT
-    ON UPDATE CASCADE)
+  PRIMARY KEY (`drug_id`))
 ENGINE = InnoDB;
 
 
