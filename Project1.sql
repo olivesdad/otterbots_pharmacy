@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `pharmacy`.`doctor` (
   `ssn` CHAR(11) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `specialty` VARCHAR(45) NOT NULL,
-  `practice_since` DATE NOT NULL,
+  `practice_since` VARCHAR(4) NOT NULL,
   PRIMARY KEY (`doctor_id`))
 ENGINE = InnoDB;
 
