@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `pharmacy`.`patient` (
   `ssn` CHAR(11) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `dob` DATE NOT NULL,
-  `address` VARCHAR(45) NOT NULL,
+  `address` VARCHAR(70) NOT NULL,
   `doctorid` INT NOT NULL,
   PRIMARY KEY (`patient_id`),
   CONSTRAINT `fk_patient_doctorid`

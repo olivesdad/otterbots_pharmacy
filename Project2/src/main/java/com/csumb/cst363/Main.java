@@ -2,6 +2,10 @@ package com.csumb.cst363;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -50,15 +54,19 @@ public class Main {
             prescriptions.add(getPrescription(doctors.get(d), patients.get(p)));
         }
 
-        for (Patient p : patients){ //diag to print patients
-            System.out.println(p.toString());
-        }
+
         for (Doctor d : doctors){ //print doctors
-            System.out.println(d.toString());
+            System.out.println(insertDoctorStatement(d));
+            insert(insertDoctorStatement(d));
         }
-        for (Prescription p : prescriptions){
-            System.out.println(p.toString());
+        for (Patient p : patients){ //diag to print patients
+           System.out.println(insertPatientStatement(p));
+           insert(insertPatientStatement(p));
         }
+//        for (Prescription p : prescriptions){
+//            System.out.println(p.toString());
+//        }
+
     }//END MAIN
 
     public static Prescription getPrescription(Doctor doctor, Patient patient){
@@ -141,7 +149,7 @@ public class Main {
         //year first
          s.append((new Random().nextInt(122) +1900) + "-") ;
          s.append(String.format("%02d", new Random().nextInt(11) + 1) +"-");
-         s.append(String.format("%02d", new Random().nextInt(30) +1 ));
+         s.append(String.format("%02d", new Random().nextInt(27) +1 ));
 
         return s.toString();
     }
@@ -171,4 +179,52 @@ public class Main {
 
     }
 
+    //##################################
+    // use this to run sql statements ##
+    //##################################
+    public static void insert(String s){
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive"); ) {
+            PreparedStatement ps = con.prepareStatement(s);
+            ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public static String insertDoctorStatement(Doctor d){ //generate an insert satement for doctors
+        return "insert into doctor values ("+ d.getId()+",'"
+                                            + d.getSsn()+"','"
+                                            + d.getName() + "','"
+                                            + d.getSpecialty()+"','"
+                                            + d.getPractice_since_year()+"');";
+    }
+
+    public static String insertPatientStatement(Patient p ){
+        //insert into patient values (1, '222-22-2222', 'name', '1995-12-12', '123 street', 1);
+        return "insert into patient values ("+
+                p.getPatientId()+",'"+
+                p.getSsn()+"','"+
+                p.getName()+"','"+
+                p.getBirthdate()+"','"+
+                p.getStreet() + " " +p.getCity()+", "+p.getState()+ " "+p.getZipcode()+"',"+
+                p.getPrimaryID()+");";
+
+    }
+
+    public static int getDrugId(String drug){
+
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive"); ) {
+            PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
+            ps.setString(1, "Asia");
+            ps.setInt(2, 76);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String code = rs.getString(1);
+                String name = rs.getString(2);
+                int population = rs.getInt(3);
+                double life = rs.getDouble(4);
+                System.out.printf("%5s %-20s %12d %8.1f\n", code, name, population, life);
+            }
+    }catch (Exception e){
+            e.printStackTrace();
+        }
 }
