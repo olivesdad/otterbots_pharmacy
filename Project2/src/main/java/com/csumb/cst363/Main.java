@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Main {
+public class DataGenerate {
     //USE THESE VARS TO CONNECT TO SERVER
     public static final String user = "andy";
     public static final String pw = "olive";
