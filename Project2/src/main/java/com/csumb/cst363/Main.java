@@ -34,42 +34,55 @@ public class Main {
 
     //Main driver
     public static void main(String[] args) {
-        List <Patient>patients  = new ArrayList<>();
-        List <Doctor> doctors = new ArrayList<>();
-        List <Prescription> prescriptions = new ArrayList<>();
+        List<Patient> patients = new ArrayList<>();
+        List<Doctor> doctors = new ArrayList<>();
+        List<Prescription> prescriptions = new ArrayList<>();
 
         //create 10 random doctors in doctors list
-        for (int i = 0; i < doctorCount; i++){
-            doctors.add(getDoctor(i+1));
+        for (int i = 0; i < doctorCount; i++) {
+            doctors.add(getDoctor(i + 1));
         }
         //create 500 random patients, use doctors list to populate primary id and primary name
-        for (int i = 0 ; i < patientCount ; i++) {
+        for (int i = 0; i < patientCount; i++) {
             //populate patients list with 500 random generated patients
-            patients.add(getPatiant(i+1, doctors.get(new Random().nextInt(doctors.size()-1))));
+            patients.add(getPatiant(i + 1, doctors.get(new Random().nextInt(doctors.size() - 1))));
         }
         //create random prescriptions
-        for (int i =0 ; i < scriptCount; i++){
-            int p =new Random().nextInt(patientCount -1) +1 ;
-            int d = new Random().nextInt(doctorCount - 1) +1;
+        for (int i = 0; i < scriptCount; i++) {
+            int p = new Random().nextInt(patientCount - 1) + 1;
+            int d = new Random().nextInt(doctorCount - 1) + 1;
             prescriptions.add(getPrescription(doctors.get(d), patients.get(p)));
         }
 
 
-        for (Doctor d : doctors){ //print doctors
-            System.out.println(insertDoctorStatement(d));
-            insert(insertDoctorStatement(d));
+/*
+ *  _                  _     _    _         _
+ * (_)_ _  ___ ___ _ _| |_  | |__| |___  __| |__
+ * | | ' \(_-</ -_) '_|  _| | '_ \ / _ \/ _| / /
+ * |_|_||_/__/\___|_|  \__| |_.__/_\___/\__|_\_\
+ */
+        //make connection
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive");) {
+            PreparedStatement ps = null;
+            // ps.execute();
+
+            for (Doctor d : doctors) { //print doctors
+                System.out.println(insertDoctorStatement(d));
+                ps = con.prepareStatement(insertDoctorStatement(d));
+                ps.execute();
+            }
+            for (Patient p : patients) { //diag to print patients
+                System.out.println(insertPatientStatement(p));
+                ps = con.prepareStatement(insertPatientStatement(p));
+                ps.execute();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        for (Patient p : patients){ //diag to print patients
-           System.out.println(insertPatientStatement(p));
-           insert(insertPatientStatement(p));
-        }
-//        for (Prescription p : prescriptions){
-//            System.out.println(p.toString());
-//        }
 
     }//END MAIN
 
-    public static Prescription getPrescription(Doctor doctor, Patient patient){
+    public static Prescription getPrescription(Doctor doctor, Patient patient) {
         Prescription prescription = new Prescription();
 
         prescription.setDrugName(getRandomLine(drugFile, drugLines));
@@ -82,20 +95,21 @@ public class Main {
     }
 
     //generate a doctor
-    public static Doctor getDoctor(int id){
+    public static Doctor getDoctor(int id) {
         Doctor doc = new Doctor();
         doc.setId(id);
         doc.setName(randomFullName());
         doc.setSsn(randomSSN());
         doc.setSpecialty(randomSpecialty());
-        doc.setPractice_since_year((new Random().nextInt(122)+1900)+"");
+        doc.setPractice_since_year((new Random().nextInt(122) + 1900) + "");
         return doc;
     }
+
     //generate a patient
-    public static Patient getPatiant(int id, Doctor primary){
+    public static Patient getPatiant(int id, Doctor primary) {
         Patient p = new Patient();
         //populate all fields
-        p.setPatientId(id +"");
+        p.setPatientId(id + "");
         p.setName(randomFullName());
         p.setBirthdate(randomBday());
         p.setStreet(randomAddress());
@@ -108,73 +122,73 @@ public class Main {
 
         return p;
     }
+
     //Call getName twice on firstname and lastname text files to get a name
-    public static String randomFullName(){
+    public static String randomFullName() {
         StringBuilder name = new StringBuilder();
         name.append(getRandomLine(fNameFile, fNameLines));
         name.append(" ").append(getRandomLine(lastNameFile, lnameLines));
-        return  name.toString();
+        return name.toString();
     }
 
     //return a random gnerated street address
-    public static String randomAddress(){
+    public static String randomAddress() {
         StringBuilder s = new StringBuilder();
-        s.append((new Random().nextInt(9998)+1)+" ").append(getRandomLine(streetFile, streetLines));
+        s.append((new Random().nextInt(9998) + 1) + " ").append(getRandomLine(streetFile, streetLines));
         return s.toString();
     }
 
     //takes filename of random names file and the linecount returns a random slection
-    public static String getRandomLine(String fileLocation, int numLines){
+    public static String getRandomLine(String fileLocation, int numLines) {
         File file = new File(fileLocation);
         Scanner scanner = null;
         String s = "";
 
         // generate random number
-        int rand = new Random().nextInt(numLines-1) +1;
+        int rand = new Random().nextInt(numLines - 1) + 1;
 
         try {
             scanner = new Scanner(file);
-            for (int i = 0; i < rand ; i++) scanner.nextLine();
-                s=scanner.nextLine();
-        }
-        catch (FileNotFoundException e){
+            for (int i = 0; i < rand; i++) scanner.nextLine();
+            s = scanner.nextLine();
+        } catch (FileNotFoundException e) {
             System.out.printf(e.toString());
         }
         return s;
     }
 
     //generate random birthdate format is YYYY-MM-DD
-    public static String randomBday(){
+    public static String randomBday() {
         StringBuilder s = new StringBuilder();
         //year first
-         s.append((new Random().nextInt(122) +1900) + "-") ;
-         s.append(String.format("%02d", new Random().nextInt(11) + 1) +"-");
-         s.append(String.format("%02d", new Random().nextInt(27) +1 ));
+        s.append((new Random().nextInt(122) + 1900) + "-");
+        s.append(String.format("%02d", new Random().nextInt(11) + 1) + "-");
+        s.append(String.format("%02d", new Random().nextInt(27) + 1));
 
         return s.toString();
     }
 
     //generate random zip
-    public static String randomZip(){
-        return (new Random().nextInt(89999) + 10000)+"";
+    public static String randomZip() {
+        return (new Random().nextInt(89999) + 10000) + "";
     }
 
     //generate random ssn
-    public static String randomSSN(){
+    public static String randomSSN() {
         StringBuilder s = new StringBuilder();
-        s.append((new Random().nextInt(799) + 100)+"-"); //first 3 digits
-        s.append(String.format("%02d", new Random().nextInt(98)+1)+"-"); //middle
-        s.append(String.format("%04d", new Random().nextInt(9998)+1));
+        s.append((new Random().nextInt(799) + 100) + "-"); //first 3 digits
+        s.append(String.format("%02d", new Random().nextInt(98) + 1) + "-"); //middle
+        s.append(String.format("%04d", new Random().nextInt(9998) + 1));
         return s.toString();
     }
 
     //generate random speciality
-    public static String randomSpecialty(){
+    public static String randomSpecialty() {
 
-        String[] specialties = { "Internal Medicine",
+        String[] specialties = {"Internal Medicine",
                 "Family Medicine", "Pediatrics", "Orthopedics",
-                "Dermatology",  "Cardiology", "Gynecology",
-                "Gastroenterology", "Psychiatry", "Oncology" };
+                "Dermatology", "Cardiology", "Gynecology",
+                "Gastroenterology", "Psychiatry", "Oncology"};
         return specialties[new Random().nextInt(specialties.length)];
 
     }
@@ -182,49 +196,44 @@ public class Main {
     //##################################
     // use this to run sql statements ##
     //##################################
-    public static void insert(String s){
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive"); ) {
-            PreparedStatement ps = con.prepareStatement(s);
-            ps.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public static String insertDoctorStatement(Doctor d){ //generate an insert satement for doctors
-        return "insert into doctor values ("+ d.getId()+",'"
-                                            + d.getSsn()+"','"
-                                            + d.getName() + "','"
-                                            + d.getSpecialty()+"','"
-                                            + d.getPractice_since_year()+"');";
+
+
+    public static String insertDoctorStatement(Doctor d) { //generate an insert satement for doctors
+        return "insert into doctor values (" + d.getId() + ",'"
+                + d.getSsn() + "','"
+                + d.getName() + "','"
+                + d.getSpecialty() + "','"
+                + d.getPractice_since_year() + "');";
     }
 
-    public static String insertPatientStatement(Patient p ){
+    public static String insertPatientStatement(Patient p) {
         //insert into patient values (1, '222-22-2222', 'name', '1995-12-12', '123 street', 1);
-        return "insert into patient values ("+
-                p.getPatientId()+",'"+
-                p.getSsn()+"','"+
-                p.getName()+"','"+
-                p.getBirthdate()+"','"+
-                p.getStreet() + " " +p.getCity()+", "+p.getState()+ " "+p.getZipcode()+"',"+
-                p.getPrimaryID()+");";
+        return "insert into patient values (" +
+                p.getPatientId() + ",'" +
+                p.getSsn() + "','" +
+                p.getName() + "','" +
+                p.getBirthdate() + "','" +
+                p.getStreet() + " " + p.getCity() + ", " + p.getState() + " " + p.getZipcode() + "'," +
+                p.getPrimaryID() + ");";
 
     }
 
-    public static int getDrugId(String drug){
-
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive"); ) {
-            PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
-            ps.setString(1, "Asia");
-            ps.setInt(2, 76);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                String code = rs.getString(1);
-                String name = rs.getString(2);
-                int population = rs.getInt(3);
-                double life = rs.getDouble(4);
-                System.out.printf("%5s %-20s %12d %8.1f\n", code, name, population, life);
-            }
-    }catch (Exception e){
-            e.printStackTrace();
-        }
+//    public static int getDrugId(String drug) {
+//
+//        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive");) {
+//            PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
+//            ps.setString(1, "Asia");
+//            ps.setInt(2, 76);
+//            ResultSet rs = ps.executeQuery();
+//            while (rs.next()) {
+//                String code = rs.getString(1);
+//                String name = rs.getString(2);
+//                int population = rs.getInt(3);
+//                double life = rs.getDouble(4);
+//                System.out.printf("%5s %-20s %12d %8.1f\n", code, name, population, life);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
