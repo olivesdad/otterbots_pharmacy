@@ -12,6 +12,10 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
+    //USE THESE VARS TO CONNECT TO SERVER
+    public static final String user = "andy";
+    public static final String pw = "olive";
+    public static final String server = "jdbc:mysql://192.168.1.18:3306/pharmacy";
 
     //Constants for random text files
     public static final String fNameFile = "fnames.txt";
@@ -24,8 +28,6 @@ public class Main {
     public static final int streetLines = 500;
     public static final String citiesFile = "cities.txt";
     public static final int cityLines = 385;
-    public static final String drugFile = "drug.txt";
-    public static final int drugLines = 99;
 
     //Constants for number of patients, doctors and scripts
     public static final int doctorCount = 10;
@@ -55,23 +57,22 @@ public class Main {
  * |_|_||_/__/\___|_|  \__| |_.__/_\___/\__|_\_\
  */
         //make connection
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andymac", "olive");) {
+        try (Connection con = DriverManager.getConnection(server, user, pw);) {
             PreparedStatement ps = null;
-            // ps.execute();
 
             //insert doctors
-//            for (Doctor d : doctors) { //print doctors
-//                System.out.println(insertDoctorStatement(d));
-//                ps = con.prepareStatement(insertDoctorStatement(d));
-//                ps.execute();
-//            }
-//            //insert patients
-//            for (Patient p : patients) { //diag to print patients
-//                System.out.println(insertPatientStatement(p));
-//                ps = con.prepareStatement(insertPatientStatement(p));
-//                ps.execute();
-//            }
-            //create random prescriptions
+            for (Doctor d : doctors) { //print doctors
+                System.out.println(insertDoctorStatement(d));
+                ps = con.prepareStatement(insertDoctorStatement(d));
+                ps.execute();
+            }
+            //insert patients
+            for (Patient p : patients) { //diag to print patients
+                System.out.println(insertPatientStatement(p));
+                ps = con.prepareStatement(insertPatientStatement(p));
+                ps.execute();
+            }
+            //create random prescriptions and insert them by selecting random doctors and patients from lists
             for (int i = 0; i < scriptCount; i++) {
                 int p = new Random().nextInt(patientCount - 1) + 1;
                 int d = new Random().nextInt(doctorCount - 1) + 1;
@@ -82,20 +83,8 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }//END MAIN
 
-    public static Prescription getPrescription(Doctor doctor, Patient patient) {
-        Prescription prescription = new Prescription();
-
-        prescription.setDrugName((new Random().nextInt(98)+1) +"");
-        prescription.setQuantity(new Random().nextInt(100));
-        prescription.setPatientName(patient.getName());
-        prescription.setPatient_ssn(patient.getSsn());
-        prescription.setDoctorName(doctor.getName());
-        prescription.setDoctor_ssn(doctor.getSsn());
-        return prescription;
-    }
 
     //generate a doctor
     public static Doctor getDoctor(int id) {
@@ -125,7 +114,15 @@ public class Main {
 
         return p;
     }
-
+    /*
+                         __
+                        /\ \
+ _ __    __      ___    \_\ \
+/\`'__\/'__`\  /' _ `\  /'_` \
+\ \ \//\ \L\.\_/\ \/\ \/\ \L\ \
+ \ \_\\ \__/.\_\ \_\ \_\ \___,_\
+  \/_/ \/__/\/_/\/_/\/_/\/__,_ /
+     */
     //Call getName twice on firstname and lastname text files to get a name
     public static String randomFullName() {
         StringBuilder name = new StringBuilder();
@@ -167,7 +164,6 @@ public class Main {
         s.append((new Random().nextInt(122) + 1900) + "-");
         s.append(String.format("%02d", new Random().nextInt(11) + 1) + "-");
         s.append(String.format("%02d", new Random().nextInt(27) + 1));
-
         return s.toString();
     }
 
@@ -227,6 +223,7 @@ public class Main {
             p.getPatientId()+","+
             (new Random().nextInt(98) +1) + "," +
             (new Random().nextInt(100)+1) +");";
+        System.out.println(s);
         return s;
     }
 
