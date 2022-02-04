@@ -47,13 +47,6 @@ public class Main {
             //populate patients list with 500 random generated patients
             patients.add(getPatiant(i + 1, doctors.get(new Random().nextInt(doctors.size() - 1))));
         }
-        //create random prescriptions
-        for (int i = 0; i < scriptCount; i++) {
-            int p = new Random().nextInt(patientCount - 1) + 1;
-            int d = new Random().nextInt(doctorCount - 1) + 1;
-            prescriptions.add(getPrescription(doctors.get(d), patients.get(p)));
-        }
-
 
 /*
  *  _                  _     _    _         _
@@ -62,19 +55,29 @@ public class Main {
  * |_|_||_/__/\___|_|  \__| |_.__/_\___/\__|_\_\
  */
         //make connection
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive");) {
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andymac", "olive");) {
             PreparedStatement ps = null;
             // ps.execute();
 
-            for (Doctor d : doctors) { //print doctors
-                System.out.println(insertDoctorStatement(d));
-                ps = con.prepareStatement(insertDoctorStatement(d));
+            //insert doctors
+//            for (Doctor d : doctors) { //print doctors
+//                System.out.println(insertDoctorStatement(d));
+//                ps = con.prepareStatement(insertDoctorStatement(d));
+//                ps.execute();
+//            }
+//            //insert patients
+//            for (Patient p : patients) { //diag to print patients
+//                System.out.println(insertPatientStatement(p));
+//                ps = con.prepareStatement(insertPatientStatement(p));
+//                ps.execute();
+//            }
+            //create random prescriptions
+            for (int i = 0; i < scriptCount; i++) {
+                int p = new Random().nextInt(patientCount - 1) + 1;
+                int d = new Random().nextInt(doctorCount - 1) + 1;
+                ps = con.prepareStatement(insertPrescription(doctors.get(d),patients.get(p)));
                 ps.execute();
-            }
-            for (Patient p : patients) { //diag to print patients
-                System.out.println(insertPatientStatement(p));
-                ps = con.prepareStatement(insertPatientStatement(p));
-                ps.execute();
+              //  prescriptions.add(getPrescription(doctors.get(d), patients.get(p)));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +88,7 @@ public class Main {
     public static Prescription getPrescription(Doctor doctor, Patient patient) {
         Prescription prescription = new Prescription();
 
-        prescription.setDrugName(getRandomLine(drugFile, drugLines));
+        prescription.setDrugName((new Random().nextInt(98)+1) +"");
         prescription.setQuantity(new Random().nextInt(100));
         prescription.setPatientName(patient.getName());
         prescription.setPatient_ssn(patient.getSsn());
@@ -193,9 +196,9 @@ public class Main {
 
     }
 
-    //##################################
-    // use this to run sql statements ##
-    //##################################
+    //###############################
+    // Generate insert statements ##
+    //#############################
 
 
     public static String insertDoctorStatement(Doctor d) { //generate an insert satement for doctors
@@ -217,23 +220,29 @@ public class Main {
                 p.getPrimaryID() + ");";
 
     }
+    public static String insertPrescription(Doctor d, Patient p){
+       // INSERT INTO prescription (doctor_id, patient_id, drug_id, quantity) values (2, 3, 1 , 59);
+        String s = "insert into prescription (doctor_id, patient_id, drug_id, quantity) values (" +
+            d.getId()+ ","+
+            p.getPatientId()+","+
+            (new Random().nextInt(98) +1) + "," +
+            (new Random().nextInt(100)+1) +");";
+        return s;
+    }
 
-//    public static int getDrugId(String drug) {
-//
-//        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive");) {
-//            PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
-//            ps.setString(1, "Asia");
-//            ps.setInt(2, 76);
-//            ResultSet rs = ps.executeQuery();
-//            while (rs.next()) {
-//                String code = rs.getString(1);
-//                String name = rs.getString(2);
-//                int population = rs.getInt(3);
-//                double life = rs.getDouble(4);
-//                System.out.printf("%5s %-20s %12d %8.1f\n", code, name, population, life);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public static String getDrugName(int drugId) {
+        String drugName = "";
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andymac", "olive");) {
+           // PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
+            PreparedStatement ps = con.prepareStatement("select trade_name from drug where drug_id=?");
+            ps.setInt(1, drugId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                 drugName = rs.getString(1);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return drugName;
+    }
 }
