@@ -17,6 +17,11 @@ public class Main {
     public static final String pw = "olive";
     public static final String server = "jdbc:mysql://192.168.1.18:3306/pharmacy";
 
+    //Constants for number of patients, doctors and scripts
+    public static final int doctorCount = 10;
+    public static final int patientCount = 500;
+    public static final int scriptCount = 1000;
+
     //Constants for random text files
     public static final String fNameFile = "fnames.txt";
     public static final int fNameLines = 4940;
@@ -29,10 +34,6 @@ public class Main {
     public static final String citiesFile = "cities.txt";
     public static final int cityLines = 385;
 
-    //Constants for number of patients, doctors and scripts
-    public static final int doctorCount = 10;
-    public static final int patientCount = 500;
-    public static final int scriptCount = 1000;
 
     //Main driver
     public static void main(String[] args) {
@@ -49,13 +50,12 @@ public class Main {
             //populate patients list with 500 random generated patients
             patients.add(getPatiant(i + 1, doctors.get(new Random().nextInt(doctors.size() - 1))));
         }
-
-/*
- *  _                  _     _    _         _
- * (_)_ _  ___ ___ _ _| |_  | |__| |___  __| |__
- * | | ' \(_-</ -_) '_|  _| | '_ \ / _ \/ _| / /
- * |_|_||_/__/\___|_|  \__| |_.__/_\___/\__|_\_\
- */
+        /*
+         *  _                  _     _    _         _
+         * (_)_ _  ___ ___ _ _| |_  | |__| |___  __| |__
+         * | | ' \(_-</ -_) '_|  _| | '_ \ / _ \/ _| / /
+         * |_|_||_/__/\___|_|  \__| |_.__/_\___/\__|_\_\
+         */
         //make connection
         try (Connection con = DriverManager.getConnection(server, user, pw);) {
             PreparedStatement ps = null;
@@ -76,9 +76,9 @@ public class Main {
             for (int i = 0; i < scriptCount; i++) {
                 int p = new Random().nextInt(patientCount - 1) + 1;
                 int d = new Random().nextInt(doctorCount - 1) + 1;
-                ps = con.prepareStatement(insertPrescription(doctors.get(d),patients.get(p)));
+                ps = con.prepareStatement(insertPrescription(doctors.get(d), patients.get(p)));
                 ps.execute();
-              //  prescriptions.add(getPrescription(doctors.get(d), patients.get(p)));
+                //  prescriptions.add(getPrescription(doctors.get(d), patients.get(p)));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,6 +114,7 @@ public class Main {
 
         return p;
     }
+
     /*
                          __
                         /\ \
@@ -216,13 +217,14 @@ public class Main {
                 p.getPrimaryID() + ");";
 
     }
-    public static String insertPrescription(Doctor d, Patient p){
-       // INSERT INTO prescription (doctor_id, patient_id, drug_id, quantity) values (2, 3, 1 , 59);
+
+    public static String insertPrescription(Doctor d, Patient p) {
+        // INSERT INTO prescription (doctor_id, patient_id, drug_id, quantity) values (2, 3, 1 , 59);
         String s = "insert into prescription (doctor_id, patient_id, drug_id, quantity) values (" +
-            d.getId()+ ","+
-            p.getPatientId()+","+
-            (new Random().nextInt(98) +1) + "," +
-            (new Random().nextInt(100)+1) +");";
+                d.getId() + "," +
+                p.getPatientId() + "," +
+                (new Random().nextInt(98) + 1) + "," +
+                (new Random().nextInt(100) + 1) + ");";
         System.out.println(s);
         return s;
     }
@@ -230,12 +232,12 @@ public class Main {
     public static String getDrugName(int drugId) {
         String drugName = "";
         try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andymac", "olive");) {
-           // PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
+            // PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
             PreparedStatement ps = con.prepareStatement("select trade_name from drug where drug_id=?");
             ps.setInt(1, drugId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                 drugName = rs.getString(1);
+                drugName = rs.getString(1);
             }
         } catch (Exception e) {
             e.printStackTrace();
