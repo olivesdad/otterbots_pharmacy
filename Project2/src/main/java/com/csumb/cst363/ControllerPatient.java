@@ -62,6 +62,10 @@ public class ControllerPatient {
                 p.getCity() + ", " + p.getState() + " " + p.getZipcode();
 
         try (Connection con = getConnection();) {
+			PreparedStatement ss = con.prepareStatement("select * from patient where ssn =?");
+			ss.setString(1, p.getSsn());
+			ResultSet ssn = ss.executeQuery();
+			if (ssn.next()) throw new IOException("SSN is already in use!");
 
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             //$$ Query Doctor Name and return doctor_id $$
