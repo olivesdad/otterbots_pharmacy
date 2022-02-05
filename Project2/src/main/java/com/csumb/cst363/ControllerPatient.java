@@ -80,7 +80,7 @@ public class ControllerPatient {
 			ps.setString(4, addy);
 			ps.setInt(5,doctorid);
 			ps.execute();
-			
+
 			// display message and patient information
 			model.addAttribute("message", "Registration successful.");
 			model.addAttribute("patient", p);
