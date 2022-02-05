@@ -229,20 +229,4 @@ public class DataGenerate {
         System.out.println(s);
         return s;
     }
-
-    public static String getDrugName(int drugId) {
-        String drugName = "";
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andymac", "olive");) {
-            // PreparedStatement ps = con.prepareStatement("select code, name, population, lifeexpectancy from Country where continent=? and lifeexpectancy<=?");
-            PreparedStatement ps = con.prepareStatement("select trade_name from drug where drug_id=?");
-            ps.setInt(1, drugId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                drugName = rs.getString(1);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return drugName;
-    }
 }

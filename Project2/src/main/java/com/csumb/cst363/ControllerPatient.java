@@ -56,6 +56,16 @@ public class ControllerPatient {
      */
     @PostMapping("/patient/new")
     public String newPatient(Patient p, Model model) {
+/**
+ * This is the add new patient method. It accepts a patient object and performs the following actions:
+ * 1. connect to pharmacy database
+ * 2. checks if the enteres SSN is already in the patient table. Throws IOException if the ssn is in use
+ * 3. checks the doctors name in the database and returns the first entries ID and specialty to use later. Throws IOException if Dr not found
+ * 4. checks the patients age to determine if they are younger than 18
+ * 5. Checks if the entered doctor is a valid selection. (Minors should match with Pediatrics DR and others should match with Family or Internal med) Throws IOException
+ * 6. inserts patient into patient table with patient info and doctors id (Throws IOException for any SQL errors)
+ */
+
 
         //make cat address into single string
         String addy = p.getStreet() + ", " +
@@ -129,7 +139,6 @@ public class ControllerPatient {
             model.addAttribute("patient", p);
             return "patient_show";
         }
-
 
     }
 
