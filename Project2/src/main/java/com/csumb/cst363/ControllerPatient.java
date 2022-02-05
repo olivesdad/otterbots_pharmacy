@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.time.temporal.ChronoUnit;
+import java.util.regex.Pattern;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +76,9 @@ public class ControllerPatient {
 			PreparedStatement ss = con.prepareStatement("select * from patient where ssn =?");
 			ss.setString(1, p.getSsn());
 			ResultSet ssn = ss.executeQuery();
-			if (ssn.next()) throw new IOException("SSN is already in use!");
+            String pattern = "[1-8][0-9][0-9]-([0-9][1-9]|[1-9][0-9])-([0-9][0-9][0-9][1-9]|[0-9][0-9][1-9]0|[0-9][1-9]00|[1-9]000)";
+            if (!Pattern.matches(pattern, p.getSsn())) throw new IOException(p.getSsn()+" is not a valid SSN");
+            if (ssn.next()) throw new IOException("SSN is already in use!");
 
             //$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
             //$$ Query Doctor Name and return doctor_id $$
