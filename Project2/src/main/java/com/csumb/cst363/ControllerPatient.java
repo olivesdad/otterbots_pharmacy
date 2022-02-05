@@ -1,12 +1,16 @@
 package com.csumb.cst363;
+import java.time.LocalDate;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.time.temporal.ChronoUnit;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
@@ -61,12 +65,34 @@ public class ControllerPatient {
 			//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 			//$$ Query Doctor Name and return doctor_id $$
 			//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
-			PreparedStatement ds = con.prepareStatement("select doctor_id from doctor where name =?;");
+			PreparedStatement ds = con.prepareStatement("select doctor_id, specialty from doctor where name =?;");
 			ds.setString(1,p.getPrimaryName());
 			ResultSet rs = ds.executeQuery();
 			int doctorid = 0;
+			String special = "";
+
+			//logic to check if the patient is a minor
+			LocalDate dob = LocalDate.parse(p.getBirthdate()).plus(12, ChronoUnit.YEARS);
+			LocalDate today = LocalDate.now();
+			boolean adult = true;
+			if( dob.isAfter(today)){
+				adult = false;
+			}
+
+			//get info about the doctor
 			if (rs.next()){
 				doctorid = rs.getInt(1);
+				special = rs.getString(2);
+			}
+			//throw exception if doctor is not found
+			if (doctorid == 0) throw new IOException("Doctor not found");
+
+			//Check doctor is internal med or family  and an adult
+			else if (adult && !special.equals("Family Medicine")  && !special.equals("Internal Medicine")){
+				throw new IOException("Primary Doctor must specialize in Internal or Familiy medicine");
+			}
+			else if (!adult && !special.equals("Pediatrics")){
+				throw new IOException("Minors should see a Pediatric specialist");
 			}
 
 			//%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,7 +116,12 @@ public class ControllerPatient {
 			model.addAttribute("message", "SQL Error."+e.getMessage());
 			model.addAttribute("patient", p);
 			return "patient_show";
+		} catch (IOException e){
+			model.addAttribute("message", "Invalid input: "+e.getMessage());
+			model.addAttribute("patient", p);
+			return "patient_show";
 		}
+
 
 	}
 	
