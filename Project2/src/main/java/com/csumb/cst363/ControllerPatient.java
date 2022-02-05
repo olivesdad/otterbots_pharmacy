@@ -52,16 +52,45 @@ public class ControllerPatient {
 	@PostMapping("/patient/new")
 	public String newPatient(Patient p, Model model) {
 
-		// TODO
+		//make cat address into single string
+		String addy = p.getStreet() + ", "+
+					  p.getCity()+ ", " +p.getState()+ " " + p.getZipcode();
 
-		/*
-		 * Complete database logic to verify and process new patient
-		 */
-		// fake data for generated patient id.
-		p.setPatientId("300198");
-		model.addAttribute("message", "Registration successful.");
-		model.addAttribute("patient", p);
-		return "patient_show";
+		try (Connection con = getConnection();) {
+
+			//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+			//$$ Query Doctor Name and return doctor_id $$
+			//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+			PreparedStatement ds = con.prepareStatement("select doctor_id from doctor where name =?;");
+			ds.setString(1,p.getPrimaryName());
+			ResultSet rs = ds.executeQuery();
+			int doctorid = 0;
+			if (rs.next()){
+				doctorid = rs.getInt(1);
+			}
+
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			//%% The insert statement %%%
+			//%%%%%%%%%%%%%%%%%%%%%%%%%%%
+			PreparedStatement ps = con.prepareStatement("insert into patient (ssn, name, dob, address, doctorid ) values(?, ?, ?, ?, ?)",
+					Statement.RETURN_GENERATED_KEYS);
+			ps.setString(1, p.getSsn());
+			ps.setString(2, p.getName());
+			ps.setString(3, p.getBirthdate());
+			ps.setString(4, addy);
+			ps.setInt(5,doctorid);
+			ps.execute();
+			
+			// display message and patient information
+			model.addAttribute("message", "Registration successful.");
+			model.addAttribute("patient", p);
+			return "patient_show";
+
+		} catch (SQLException e) {
+			model.addAttribute("message", "SQL Error."+e.getMessage());
+			model.addAttribute("patient", p);
+			return "patient_show";
+		}
 
 	}
 	

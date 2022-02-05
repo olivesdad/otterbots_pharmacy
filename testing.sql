@@ -4,6 +4,8 @@ delete from patient;
 delete from doctor;
 delete from prescription;
 
-
+insert into patient (ssn, name, dob, address, doctorid) values ('123-22-2222' , 'bobby benson', '1999-04-04', '12 boo street', 5);
 
 select trade_name from drug where drug_id = 1;
+
+select doctor_id from doctor where name = 'Jany Shreve';
