@@ -7,6 +7,14 @@ import java.util.regex.Pattern;
 public class TheSanitizer {
 
     /**
+     * This ccepepts a string and checks if it is a valid date from 1900 to 2021
+     */
+    public static boolean isDOB(String s){
+        String regex = "((19[0-9]{2})|(20(([0-1][0-9])|(2[0-1]))))-(02-(0[1-9]|[12][0-9])|(0[469]|11)-(0[1-9]|[12][0-9]|30)|(0[13578]|1[02])-(0[1-9]|[12][0-9]|3[01]))";
+        if (Pattern.matches(regex, s) )return true;
+        else return false;
+    }
+    /**
      * This accepts a string and returns true if it's loosely and address.
      * we allow any combinations of alphas and numerics with the addition of dashes (-) periods (.) and commas (,)
      */

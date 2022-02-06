@@ -83,6 +83,7 @@ public class ControllerPatient {
             if(!TheSanitizer.isAddress(addy)) throw new IOException(addy+ " is not a valid address");
             if(!TheSanitizer.isZip(p.getZipcode())) throw new IOException(p.getZipcode() + " is not a valid zipcode");
             if(!TheSanitizer.isName(p.getName())) throw new IOException(p.getName() +" is not a valid name");
+            if(!TheSanitizer.isDOB(p.getBirthdate())) throw new IOException(p.getBirthdate() + " is not a valid birthdate");
 
 			PreparedStatement ss = con.prepareStatement("select * from patient where ssn =?");
 			ss.setString(1, p.getSsn());
