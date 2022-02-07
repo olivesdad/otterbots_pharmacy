@@ -66,27 +66,25 @@ public class ControllerPatient {
  * 5. Checks if the entered doctor is a valid selection. (Minors should match with Pediatrics DR and others should match with Family or Internal med) Throws IOException
  * 6. inserts patient into patient table with patient info and doctors id (Throws IOException for any SQL errors)
  */
-
-
         //make cat address into single string
         String addy = p.getStreet() + ", " +
                 p.getCity() + ", " + p.getState() + " " + p.getZipcode();
-
-
 
         try (Connection con = getConnection();) {
 
             //#######
             //REGEX##
             //#######
-            if(!TheSanitizer.isSSN(p.getSsn())) throw new IOException(p.getSsn()+ " is not a valid ssn");
-            if(!TheSanitizer.isAddress(addy)) throw new IOException(addy+ " is not a valid address");
-            if(!TheSanitizer.isZip(p.getZipcode())) throw new IOException(p.getZipcode() + " is not a valid zipcode");
-            if(!TheSanitizer.isName(p.getName())) throw new IOException(p.getName() +" is not a valid name");
+            if (!TheSanitizer.isSSN(p.getSsn())) throw new IOException(p.getSsn() + " is not a valid ssn");
+            if (!TheSanitizer.isAddress(addy)) throw new IOException(addy + " is not a valid address");
+            if (!TheSanitizer.isZip(p.getZipcode())) throw new IOException(p.getZipcode() + " is not a valid zipcode");
+            if (!TheSanitizer.isName(p.getName())) throw new IOException(p.getName() + " is not a valid name");
+            if (!TheSanitizer.isDOB(p.getBirthdate()))
+                throw new IOException(p.getBirthdate() + " is not a valid birthdate");
 
-			PreparedStatement ss = con.prepareStatement("select * from patient where ssn =?");
-			ss.setString(1, p.getSsn());
-			ResultSet ssn = ss.executeQuery();
+            PreparedStatement ss = con.prepareStatement("select * from patient where ssn =?");
+            ss.setString(1, p.getSsn());
+            ResultSet ssn = ss.executeQuery();
             //String pattern = "[1-8][0-9][0-9]-([0-9][1-9]|[1-9][0-9])-([0-9][0-9][0-9][1-9]|[0-9][0-9][1-9]0|[0-9][1-9]00|[1-9]000)";
 
             if (ssn.next()) throw new IOException("SSN is already in use!");
