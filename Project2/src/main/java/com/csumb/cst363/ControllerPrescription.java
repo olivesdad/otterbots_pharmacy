@@ -231,16 +231,6 @@ public class ControllerPrescription {
 		return conn;
 	}
 
-//	/*
-//	 * validate strings to ensure they are sanitized.
-//	 */
-//	private boolean isValidString(String str) {
-//		String regex = "[<>&\"\'()#&;+-]";
-//		Pattern pattern = Pattern.compile(regex);
-//		Matcher matcher = pattern.matcher(str);
-//		return !(matcher.find());
-//	}
-
 	/*
 	 * validate strings that will be converted to integer values
 	 */
@@ -252,14 +242,4 @@ public class ControllerPrescription {
 		}
 		return true;
 	}
-
-//	/*
-//	 * validate ssn in format xxx-xx-xxxx, including special rules on how ssn values are
-//	 */
-//	private boolean isValidSNN(String str) {
-//		String regex = "^(?!000|666)[0-8][0-9]{2}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$";
-//		Pattern pattern = Pattern.compile(regex);
-//		Matcher matcher = pattern.matcher(str);
-//		return matcher.matches();
-//	}
 }
