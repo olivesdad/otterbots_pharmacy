@@ -226,7 +226,7 @@ public class DataGenerate {
                 p.getSsn() + "','" +
                 p.getName() + "','" +
                 p.getBirthdate() + "','" +
-                p.getStreet() + " " + p.getCity() + ", " + p.getState() + " " + p.getZipcode() + "'," +
+                p.getStreet() + "," + p.getCity() + "," + p.getState() + "," + p.getZipcode() + "'," +
                 p.getPrimaryID() + ");";
 
     }
