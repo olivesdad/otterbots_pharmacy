@@ -67,8 +67,8 @@ public class ControllerPatient {
  * 6. inserts patient into patient table with patient info and doctors id (Throws IOException for any SQL errors)
  */
         //make cat address into single string
-        String addy = p.getStreet() + ", " +
-                p.getCity() + ", " + p.getState() + " " + p.getZipcode();
+        String addy = p.getStreet() + "," +
+                p.getCity() + "," + p.getState() + "," + p.getZipcode();
 
         try (Connection con = getConnection();) {
 
