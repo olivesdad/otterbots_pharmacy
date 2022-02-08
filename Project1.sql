@@ -35,11 +35,11 @@ CREATE TABLE IF NOT EXISTS `pharmacy`.`patient` (
   `ssn` CHAR(11) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
   `dob` DATE NOT NULL,
-  `address` VARCHAR(70) NOT NULL,
-  `doctorid` INT NOT NULL,
+  `address` VARCHAR(60) NOT NULL,
+  `doctor_id` INT NOT NULL,
   PRIMARY KEY (`patient_id`),
   CONSTRAINT `fk_patient_doctorid`
-    FOREIGN KEY (`doctorid`)
+    FOREIGN KEY (`doctor_id`)
     REFERENCES `pharmacy`.`doctor` (`doctor_id`)
     ON DELETE RESTRICT
     ON UPDATE RESTRICT)
@@ -150,15 +150,15 @@ ENGINE = InnoDB;
 -- Table `pharmacy`.`contract`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `pharmacy`.`contract` (
-  `pharcom_id` INT NOT NULL,
+  `pharm_co_id` INT NOT NULL,
   `pharmacy_id` INT NOT NULL,
   `supervisor_id` INT NOT NULL,
   `contractual_term` VARCHAR(45) NOT NULL,
   `start_date` DATE NOT NULL,
   `end_date` DATE NOT NULL,
-  PRIMARY KEY (`pharcom_id`, `pharmacy_id`),
+  PRIMARY KEY (`pharm_co_id`, `pharmacy_id`),
   CONSTRAINT `fk_contract_pharmid`
-    FOREIGN KEY (`pharcom_id`)
+    FOREIGN KEY (`pharm_co_id`)
     REFERENCES `pharmacy`.`pharmcompany` (`pharm_co_id`)
     ON DELETE RESTRICT
     ON UPDATE CASCADE,
