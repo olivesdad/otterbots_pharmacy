@@ -128,7 +128,7 @@ public class ControllerPatient {
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%
             //%% The insert statement %%%
             //%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            PreparedStatement ps = con.prepareStatement("insert into patient (ssn, name, dob, address, doctorid ) values(?, ?, ?, ?, ?)",
+            PreparedStatement ps = con.prepareStatement("insert into patient (ssn, name, dob, address, doctor_id ) values(?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, p.getSsn());
             ps.setString(2, p.getName());
