@@ -215,7 +215,7 @@ public class ControllerPatient {
         }
 
     }
-    
+
 
 	/*
 	 * Search for patient by patient id.
