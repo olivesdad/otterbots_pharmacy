@@ -203,67 +203,20 @@ public class ControllerPatient {
                 model.addAttribute("patient", patient);
                 return "patient_show";
 
-
-                model.addAttribute("patient", patient);
-                return "patient_show";
-
             } else {
                 model.addAttribute("message", "Patient not found.");
                 return "patient_get";
             }
-        }catch (SQLException e) {
+        }catch (SQLException | IOException e) {
             System.out.println("SQL error in getDoctor "+e.getMessage());
             model.addAttribute("message", "SQL Error."+e.getMessage());
-            model.addAttribute("patient", patient);
-            return "patient_get";
-        }
-
-    }
-
-    /*
-     * Search for patient by patient id.
-     */
-    @GetMapping("/patient/edit/{patientId}")
-    public String updatePatient(@PathVariable String patientId, Model model) {
-
-        // TODO Complete database logic search for patient by id.
-
-        // return fake data for now.
-        Patient p = new Patient();
-        p.setPatientId(patientId);
-        p.setName("Alex Patient");
-        p.setBirthdate("2001-01-01");
-        p.setStreet("123 Main");
-        p.setCity("SunCity");
-        p.setState("CA");
-        p.setZipcode("99999");
-        p.setPrimaryID(11111);
-        p.setPrimaryName("Dr. Watson");
-        p.setSpecialty("Family Medicine");
-        p.setYears("1992");
-
-        model.addAttribute("patient", p);
-        return "patient_edit";
-    }
-
-
-            } else {
-                model.addAttribute("message", "Patient not found.");
-                return "patient_get";
-            }
-        }catch (SQLException e) {
-            System.out.println("SQL error in getDoctor "+e.getMessage());
-            model.addAttribute("message", "SQL Error."+e.getMessage());
-            model.addAttribute("patient", patient);
-            return "patient_get";
-        } catch(IOException e) {
-            model.addAttribute("message", "Invalid input:"+e.getMessage());
             model.addAttribute("patient", patient);
             return "patient_get";
         }
 
     }
     
+
 	/*
 	 * Search for patient by patient id.
 	 */
