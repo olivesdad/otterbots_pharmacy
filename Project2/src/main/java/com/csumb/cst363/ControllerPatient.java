@@ -136,6 +136,12 @@ public class ControllerPatient {
             ps.setString(4, addy);
             ps.setInt(5, doctorid);
             ps.execute();
+            //get patient id
+            ps = con.prepareStatement("select patient_id from patient where ssn=?");
+            ps.setString(1, p.getSsn());
+            rs = ps.executeQuery();
+            if (rs.next())p.setPatientId(rs.getString(1));
+
 
             // display message and patient information
             model.addAttribute("message", "Registration successful.");
@@ -158,32 +164,52 @@ public class ControllerPatient {
      * Search for patient by patient id and name.
      */
     @PostMapping("/patient/show")
-    public String getPatientForm(@RequestParam("patientId") String patientId, @RequestParam("name") String name,
+    public String getPatientForm(Patient patient, @RequestParam("patientId") String patientId, @RequestParam("name") String name,
                                  Model model) {
 
-        // TODO
+        //setting up connection
+        try(Connection con =getConnection();){
 
-        /*
-         * code to search for patient by id and name retrieve patient data and primary
-         * doctor data create Patient object
-         */
+            System.out.println("start getPatient" + patient);
+            PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id , d.name, d.specialty, d.practice_since "
+                    + "from patient p, doctor d where p.patient_id=? and p.name=?");
 
-        // return fake data for now.
-        Patient p = new Patient();
-        p.setPatientId(patientId);
-        p.setName(name);
-        p.setBirthdate("2001-01-01");
-        p.setStreet("123 Main");
-        p.setCity("SunCity");
-        p.setState("CA");
-        p.setZipcode("99999");
-        p.setPrimaryID(11111);
-        p.setPrimaryName("Dr. Watson");
-        p.setSpecialty("Family Medicine");
-        p.setYears("1992");
+            ps.setString(1, patient.getPatientId());
+            ps.setString(2, patient.getName());
 
-        model.addAttribute("patient", p);
-        return "patient_show";
+
+
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()) {
+                patient.setPatientId(rs.getString(1));
+                patient.setName(rs.getString(2));
+                patient.setBirthdate(rs.getString(3));
+                //patient.setStreet(rs.getString(4));
+                String[] addy = rs.getString(4).split(",");
+                patient.setStreet(addy[0].trim());
+                patient.setCity(addy[1].trim());
+                patient.setState(addy[2].trim());
+                patient.setZipcode(addy[3].trim());
+                patient.setPrimaryID(rs.getInt(5));
+                patient.setPrimaryName(rs.getString(6));
+                patient.setSpecialty(rs.getString(7));
+                patient.setYears(rs.getString(8));
+
+
+                model.addAttribute("patient", patient);
+                return "patient_show";
+
+            } else {
+                model.addAttribute("message", "Patient not found.");
+                return "patient_get";
+            }
+        }catch (SQLException e) {
+            System.out.println("SQL error in getDoctor "+e.getMessage());
+            model.addAttribute("message", "SQL Error."+e.getMessage());
+            model.addAttribute("patient", patient);
+            return "patient_get";
+        }
+
     }
 
     /*
