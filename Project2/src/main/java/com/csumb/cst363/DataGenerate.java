@@ -20,7 +20,7 @@ public class DataGenerate {
 
     //Constants for number of patients, doctors and scripts
     public static final int doctorCount = 10;
-    public static final int patientCount = 500;
+    public static final int patientCount = 1000;
     public static final int scriptCount = 5000;
 
     //Constants for random text files
