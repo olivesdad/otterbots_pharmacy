@@ -91,8 +91,13 @@ public class DataGenerate {
     public static Doctor getDoctor(int id) {
         Doctor doc = new Doctor();
         doc.setId(id);
-        doc.setName(randomFullName());
-        doc.setSsn(randomSSN());
+        String name, SSN;
+        do { //use the santizer to make sure the SSNs and names are valid
+            name =randomFullName();
+            SSN = randomSSN();
+            doc.setName(name);
+            doc.setSsn(SSN);
+        }while (!TheSanitizer.isName(name) || !TheSanitizer.isSSN(SSN));
         doc.setSpecialty(randomSpecialty());
         doc.setPractice_since_year((new Random().nextInt(122) + 1900) + "");
         return doc;
@@ -101,14 +106,21 @@ public class DataGenerate {
     //generate a patient
     public static Patient getPatiant(int id, Doctor primary) {
         Patient p = new Patient();
+        String name, SSN, dob, addy;
         //populate all fields
+        do { //use the santizer to make sure the name ssn dob and address are valid
+            name = randomFullName();
+            SSN = randomSSN();
+            dob = randomBday();
+            addy = randomAddress();
+            p.setSsn(SSN);
+            p.setBirthdate(dob);
+            p.setName(name);
+            p.setStreet(addy);
+        }while (!TheSanitizer.isSSN(SSN) || !TheSanitizer.isDOB(dob) || !TheSanitizer.isAddress(addy) || !TheSanitizer.isName(name));
         p.setPatientId(id + "");
-        p.setName(randomFullName());
-        p.setBirthdate(randomBday());
-        p.setStreet(randomAddress());
-        p.setState(getRandomLine(stateFIle, stateLines));
-        p.setSsn(randomSSN());
         p.setZipcode(randomZip());
+        p.setState(getRandomLine(stateFIle, stateLines));
         p.setCity(getRandomLine(citiesFile, cityLines));
         p.setPrimaryID(primary.getId());
         p.setPrimaryName(primary.getName());
@@ -214,7 +226,7 @@ public class DataGenerate {
                 p.getSsn() + "','" +
                 p.getName() + "','" +
                 p.getBirthdate() + "','" +
-                p.getStreet() + " " + p.getCity() + ", " + p.getState() + " " + p.getZipcode() + "'," +
+                p.getStreet() + "," + p.getCity() + "," + p.getState() + "," + p.getZipcode() + "'," +
                 p.getPrimaryID() + ");";
 
     }

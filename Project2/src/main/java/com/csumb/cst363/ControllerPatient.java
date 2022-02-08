@@ -171,6 +171,7 @@ public class ControllerPatient {
         try(Connection con =getConnection();){
             if (!TheSanitizer.isName(patient.getName())) throw new IOException(patient.getName() + " is not a valid name");
 
+
             System.out.println("start getPatient" + patient);
             PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id , d.name, d.specialty, d.practice_since "
                     + "from patient p, doctor d where p.patient_id=? and p.name=?");
@@ -191,12 +192,60 @@ public class ControllerPatient {
                 patient.setCity(addy[1]);
                 patient.setState(addy[2]);
                 patient.setZipcode(addy[3]);
+                patient.setStreet(addy[0].trim());
+                patient.setCity(addy[1].trim());
+                patient.setState(addy[2].trim());
+                patient.setZipcode(addy[3].trim());
                 patient.setPrimaryID(rs.getInt(5));
                 patient.setPrimaryName(rs.getString(6));
                 patient.setSpecialty(rs.getString(7));
                 patient.setYears(rs.getString(8));
                 model.addAttribute("patient", patient);
                 return "patient_show";
+
+
+                model.addAttribute("patient", patient);
+                return "patient_show";
+
+            } else {
+                model.addAttribute("message", "Patient not found.");
+                return "patient_get";
+            }
+        }catch (SQLException e) {
+            System.out.println("SQL error in getDoctor "+e.getMessage());
+            model.addAttribute("message", "SQL Error."+e.getMessage());
+            model.addAttribute("patient", patient);
+            return "patient_get";
+        }
+
+    }
+
+    /*
+     * Search for patient by patient id.
+     */
+    @GetMapping("/patient/edit/{patientId}")
+    public String updatePatient(@PathVariable String patientId, Model model) {
+
+        // TODO Complete database logic search for patient by id.
+
+        // return fake data for now.
+        Patient p = new Patient();
+        p.setPatientId(patientId);
+        p.setName("Alex Patient");
+        p.setBirthdate("2001-01-01");
+        p.setStreet("123 Main");
+        p.setCity("SunCity");
+        p.setState("CA");
+        p.setZipcode("99999");
+        p.setPrimaryID(11111);
+        p.setPrimaryName("Dr. Watson");
+        p.setSpecialty("Family Medicine");
+        p.setYears("1992");
+
+        model.addAttribute("patient", p);
+        return "patient_edit";
+    }
+
 
             } else {
                 model.addAttribute("message", "Patient not found.");

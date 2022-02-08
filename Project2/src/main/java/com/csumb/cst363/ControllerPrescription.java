@@ -2,8 +2,6 @@ package com.csumb.cst363;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -46,9 +44,9 @@ public class ControllerPrescription {
 		try (Connection con = getConnection();) {
 
 			// validate form input.  If it fails validation, display message.
-			if(isValidSNN(p.getDoctor_ssn()) && isValidString(p.getDoctorName()) &&
-					isValidSNN(p.getPatient_ssn()) && isValidString(p.getPatientName()) &&
-					isValidString(p.getDrugName())) {
+			if(TheSanitizer.isSSN(p.getDoctor_ssn()) && TheSanitizer.isName(p.getDoctorName()) &&
+					TheSanitizer.isSSN(p.getPatient_ssn()) && TheSanitizer.isName(p.getPatientName()) &&
+					TheSanitizer.isName(p.getDrugName())) {
 				PreparedStatement validateDoctor = con.prepareStatement("select doctor_id from doctor " +
 						"where ssn = ? and name = ?;");
 				validateDoctor.setString(1, p.getDoctor_ssn());
@@ -132,10 +130,10 @@ public class ControllerPrescription {
 		try (Connection con = getConnection();) {
 
 			// validate form input.  If it fails validation, display message.
-			if(isNumeric(p.getRxid()) && isValidString(p.getPatientName()) &&
-					isValidString(p.getPharmacyName()) && isValidString(p.getPharmacyAddress())) {
+			if(isNumeric(p.getRxid()) && TheSanitizer.isName(p.getPatientName()) &&
+					TheSanitizer.isName(p.getPharmacyName()) && TheSanitizer.isAddress(p.getPharmacyAddress())) {
 				PreparedStatement validatePrescription = con.prepareStatement(
-						"select d.name, d.ssn, patient.ssn, drug.trade_name, p.quantity, filled_date, pharmacy_id " +
+						"select d.name, d.ssn, patient.ssn, drug.drug_id, drug.trade_name, p.quantity, filled_date, pharmacy_id " +
 								"from prescription p " +
 								"    join patient on p.patient_id = patient.patient_id " +
 								"    join doctor d on p.doctor_id = d.doctor_id " +
@@ -151,10 +149,11 @@ public class ControllerPrescription {
 					p.setDoctorName(resultPrescription.getString(1));
 					p.setDoctor_ssn(resultPrescription.getString(2));
 					p.setPatient_ssn(resultPrescription.getString(3));
-					p.setDrugName(resultPrescription.getString(4));
-					p.setQuantity(resultPrescription.getInt(5));
-					p.setDateFilled(resultPrescription.getString(6));
-					p.setPharmacyID(Integer.toString(resultPrescription.getInt(7)));
+					int drugId = resultPrescription.getInt(4);
+					p.setDrugName(resultPrescription.getString(5));
+					p.setQuantity(resultPrescription.getInt(6));
+					p.setDateFilled(resultPrescription.getString(7));
+					p.setPharmacyID(Integer.toString(resultPrescription.getInt(8)));
 
 					// validate if prescription has already been filled
 					if((p.getDateFilled() == "") && (p.getPharmacyID() == "")) {
@@ -173,23 +172,39 @@ public class ControllerPrescription {
 							p.setPharmacyID(Integer.toString(resultPharmacy.getInt(1)));
 							p.setPharmacyPhone(resultPharmacy.getString(2));
 
+							// set filled date to today's date
 							java.sql.Date filledDate = java.sql.Date.valueOf(LocalDate.now());
 							p.setDateFilled(filledDate.toString());
 
-							// update prescription
-							PreparedStatement ps = con.prepareStatement("update prescription set filled_date = ?, pharmacy_id = ? where rx_number = ?;");
-							ps.setDate(1, filledDate);
-							ps.setInt(2, Integer.parseInt(p.getPharmacyID()));
-							ps.setInt(3, Integer.parseInt(p.getRxid()));
+							// calculate cost of prescription (price * quantity)
+							PreparedStatement calculateCost = con.prepareStatement("select price " +
+									"from rxprice where drug_id = ? and pharmacy_id = ?;");
+							calculateCost.setString(1, Integer.toString(drugId));
+							calculateCost.setString(2, p.getPharmacyID());
+							ResultSet resultCost = calculateCost.executeQuery();
 
-							int rc = ps.executeUpdate();
-							if(rc == 1) {
-								model.addAttribute("message", "Prescription has been filled.");
-								model.addAttribute("prescription", p);
+							// validate pharmacy sells drug for a price
+							if(resultCost.next()) {
+								p.setCost(String.format("%.2f", p.getQuantity() * resultCost.getDouble(1)));
+
+								// update prescription
+								PreparedStatement ps = con.prepareStatement("update prescription set filled_date = ?, pharmacy_id = ? where rx_number = ?;");
+								ps.setDate(1, filledDate);
+								ps.setInt(2, Integer.parseInt(p.getPharmacyID()));
+								ps.setInt(3, Integer.parseInt(p.getRxid()));
+
+								int rc = ps.executeUpdate();
+								if (rc == 1) {
+									model.addAttribute("message", "Prescription has been filled.");
+									model.addAttribute("prescription", p);
+								} else {
+									model.addAttribute("message", "ERROR: Prescription was not successfully filled.");
+									model.addAttribute("prescription", p);
+								}
 							} else {
-								model.addAttribute("message", "ERROR: Prescription was not successfully filled.");
-								model.addAttribute("prescription", p);
-							}
+								p.setCost("ERROR: Unable to calculate cost without pharmacy's drug price.");
+								model.addAttribute("message", "Pharmacy does not have price for this drug.");
+							} // end validate drug price for pharmacy
 						} else {
 							model.addAttribute("message", "Pharmacy not found.");
 						} // end validate pharmacy
@@ -217,16 +232,6 @@ public class ControllerPrescription {
 	}
 
 	/*
-	 * validate strings to ensure they are sanitized.
-	 */
-	private boolean isValidString(String str) {
-		String regex = "[<>&\"\'()#&;+-]";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(str);
-		return !(matcher.find());
-	}
-
-	/*
 	 * validate strings that will be converted to integer values
 	 */
 	private boolean isNumeric(String str) {
@@ -236,15 +241,5 @@ public class ControllerPrescription {
 		return false;
 		}
 		return true;
-	}
-
-	/*
-	 * validate ssn in format xxx-xx-xxxx, including special rules on how ssn values are
-	 */
-	private boolean isValidSNN(String str) {
-		String regex = "^(?!000|666)[0-8][0-9]{2}-(?!00)[0-9]{2}-(?!0000)[0-9]{4}$";
-		Pattern pattern = Pattern.compile(regex);
-		Matcher matcher = pattern.matcher(str);
-		return matcher.matches();
 	}
 }

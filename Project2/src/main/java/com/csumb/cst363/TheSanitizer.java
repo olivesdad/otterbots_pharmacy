@@ -53,4 +53,16 @@ public class TheSanitizer {
         else return false;
     }
 
+    public static boolean isFullAddress(String s){
+        String regex = "[A-Za-z0-9' -]+,[A-Za-z0-9' -]+,[A-Za-z0-9' -]+,(?!00000)[0-9]{5}";
+        if (Pattern.matches(regex, s)) return true;
+        else return false;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(TheSanitizer.isFullAddress("123 something street,LA,CA"));
+        System.out.println(TheSanitizer.isFullAddress("123 something street,LA,CA,900"));
+        System.out.println(TheSanitizer.isFullAddress("123 something street,LA,CA,90210"));
+        System.out.println(TheSanitizer.isFullAddress("123 something st, Los angeles, CA 90210"));
+    }
 }
