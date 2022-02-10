@@ -271,13 +271,22 @@ public class ControllerPatient {
 			
 			 if (!TheSanitizer.isAddress(addy)) throw new IOException(addy + " is not a valid address");
 	         if (!TheSanitizer.isZip(patient.getZipcode())) throw new IOException(patient.getZipcode() + " is not a valid zipcode");
-	         if (!TheSanitizer.isName(patient.getName())) throw new IOException(patient.getName() + " is not a valid name");
+	         if (!TheSanitizer.isName(patient.getName())) throw new IOException(patient.getName() + " is not a valid name");  
 	         if(!TheSanitizer.isName(patient.getPrimaryName())) throw new IOException(patient.getPrimaryName()+"is not a Primary Physician");
+             int doctor_id = 0;
+             PreparedStatement ds = con.prepareStatement("select doctor_id from doctor where name=?");
+             ds.setString(1, patient.getPrimaryName());
+             ResultSet drs = ds.executeQuery();
+             if(drs.next()){
+                doctor_id = drs.getInt(1); 
+                patient.setPrimaryID(doctor_id);
+             }
+             if (doctor_id == 0) throw new IOException("Doctor not found");
 	         
-	         PreparedStatement ps = con.prepareStatement("update patient,doctor set patient.address=?, doctor.name=? where patient.patient_id=?");
+	         PreparedStatement ps = con.prepareStatement("update patient set address=?, doctor_id=? where patient_id=?");
 	            ps.setString(1, addy);
-				ps.setString(2,  patient.getPrimaryName());
-				ps.setString(3,  patient.getPatientId());
+				ps.setInt(2, doctor_id);
+				ps.setString(3,patient.getPatientId());
 
 				int rc = ps.executeUpdate();
 				if (rc==1) {
