@@ -5,9 +5,9 @@ public class FDAReport {
 
 	//setup driver
 	public static void main(String[] args) {
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmacy", "root", "olive007"); ) {
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmacy", "user", "passwd"); ) {
       
-        	String tradename= "";
+        	String tradename= "Accuneb";
         	java.sql.Date startDate = java.sql.Date.valueOf("2021-01-01");     
         	java.sql.Date endDate = java.sql.Date.valueOf("2022-12-31");     
         	

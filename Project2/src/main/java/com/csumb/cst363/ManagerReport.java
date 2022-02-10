@@ -7,9 +7,10 @@ public class ManagerReport {
         // Closes connection when try block terminates
         try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmacy", "user", "passwd"); ) {
 
-            int pharmacyId = 1;
+            //Variable to query by:
+            int pharmacyId = 2;
             java.sql.Date startDate = java.sql.Date.valueOf("2022-01-01");
-            java.sql.Date endDate = java.sql.Date.valueOf("2022-02-02");
+            java.sql.Date endDate = java.sql.Date.valueOf("2022-03-02");
 
             // Precompile SQL statements (query)
             PreparedStatement ps = con.prepareStatement("select trade_name, sum(quantity) " +
