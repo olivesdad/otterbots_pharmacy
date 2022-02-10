@@ -168,8 +168,9 @@ public class ControllerPatient {
                                  Model model) {
 
         //setting up connection
-        try(Connection con =getConnection();){
-            if (!TheSanitizer.isName(patient.getName())) throw new IOException(patient.getName() + " is not a valid name");
+        try (Connection con = getConnection();) {
+            if (!TheSanitizer.isName(patient.getName()))
+                throw new IOException(patient.getName() + " is not a valid name");
 
             System.out.println("start getPatient" + patient);
             PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id, d.name, d.specialty, d.practice_since from patient p join doctor d on p.doctor_id = d.doctor_id WHERE p.patient_id = ? and p.name=?");
@@ -177,7 +178,7 @@ public class ControllerPatient {
             ps.setString(2, patient.getName());
 
             ResultSet rs = ps.executeQuery();
-            if(rs.next()) {
+            if (rs.next()) {
                 patient.setPatientId(rs.getString(1));
                 patient.setName(rs.getString(2));
                 patient.setBirthdate(rs.getString(3));
@@ -198,65 +199,23 @@ public class ControllerPatient {
                 model.addAttribute("message", "Patient not found.");
                 return "patient_get";
             }
->>>>>>> nadz
-            System.out.println("SQL error in getDoctor "+e.getMessage());
-            model.addAttribute("message", "SQL Error."+e.getMessage());
+        } catch (SQLException e) {
+            System.out.println("SQL error in getDoctor " + e.getMessage());
+            model.addAttribute("message", "SQL Error." + e.getMessage());
             model.addAttribute("patient", patient);
             return "patient_get";
-=======
-        } catch(IOException e) {
-            model.addAttribute("message", "Invalid input:"+e.getMessage());
+        } catch (IOException e) {
+            model.addAttribute("message", "Invalid input:" + e.getMessage());
             model.addAttribute("patient", patient);
             return "patient_get";
         }
->>>>>>> nadz
 
+    }
 	/*
 	 * Search for patient by patient id.
 	 */
 	
-	@GetMapping("/patient/edit/{patientId}")
-	public String updatePatient(@PathVariable String patientId, Model model) {
-			
-			Patient patient= new Patient();
-			patient.setPatientId(patientId);
-			try(Connection con = getConnection();){
-				
-	            PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id, d.name, d.specialty, d.practice_since from patient p join doctor d on p.doctor_id = d.doctor_id WHERE p.patient_id = ?");
-				ps.setString(1,patientId);
-				
-				  ResultSet rs = ps.executeQuery();
-		            if(rs.next()) {
-		                patient.setPatientId(rs.getString(1));
-		                patient.setName(rs.getString(2));
-		                patient.setBirthdate(rs.getString(3));
-		                //patient.setStreet(rs.getString(4));
-		                String[] addy = rs.getString(4).split(",");
-		                patient.setStreet(addy[0]);
-		                patient.setCity(addy[1]);
-		                patient.setState(addy[2]);
-		                patient.setZipcode(addy[3]);
-		                patient.setPrimaryID(rs.getInt(5));
-		                patient.setPrimaryName(rs.getString(6));
-		                patient.setSpecialty(rs.getString(7));
-		                patient.setYears(rs.getString(8));
-		                model.addAttribute("patient",patient);
-		                return"patient_edit";
-				
-				} else {
-					model.addAttribute("message", "Patient not found.");
-					model.addAttribute("patient", patient);
-					return "patient_get";
-				}
-				
-		
-	} catch (SQLException e) {
-		model.addAttribute("message", "SQL Error."+e.getMessage());
-		model.addAttribute("patient", patient);
-		return "patient_get";
-		
-		}
-	}
+
 	
 	/*
 	 * Process changes to patient address and primary doctor
