@@ -5,7 +5,7 @@ public class FDAReport {
 
 	//setup driver
 	public static void main(String[] args) {
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmacy", "root", "olive007"); ) {
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18/pharmacy", "andy", "olive"); ) {
       
         	String tradename= "";
         	java.sql.Date startDate = java.sql.Date.valueOf("2021-01-01");     

@@ -125,7 +125,7 @@ public class ControllerPrescription {
 
 	@PostMapping("/prescription/fill")
 	public String processFillForm(Prescription p,  Model model) {
-
+		System.out.println("IM DYGIN HELP ME");
 		// connect to mysql database
 		try (Connection con = getConnection();) {
 
