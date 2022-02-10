@@ -171,15 +171,10 @@ public class ControllerPatient {
         try(Connection con =getConnection();){
             if (!TheSanitizer.isName(patient.getName())) throw new IOException(patient.getName() + " is not a valid name");
 
-
             System.out.println("start getPatient" + patient);
-            PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id , d.name, d.specialty, d.practice_since "
-                    + "from patient p, doctor d where p.patient_id=? and p.name=?");
-
+            PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id, d.name, d.specialty, d.practice_since from patient p join doctor d on p.doctor_id = d.doctor_id WHERE p.patient_id = ? and p.name=?");
             ps.setString(1, patient.getPatientId());
             ps.setString(2, patient.getName());
-
-
 
             ResultSet rs = ps.executeQuery();
             if(rs.next()) {
@@ -192,10 +187,6 @@ public class ControllerPatient {
                 patient.setCity(addy[1]);
                 patient.setState(addy[2]);
                 patient.setZipcode(addy[3]);
-                patient.setStreet(addy[0].trim());
-                patient.setCity(addy[1].trim());
-                patient.setState(addy[2].trim());
-                patient.setZipcode(addy[3].trim());
                 patient.setPrimaryID(rs.getInt(5));
                 patient.setPrimaryName(rs.getString(6));
                 patient.setSpecialty(rs.getString(7));
@@ -207,15 +198,18 @@ public class ControllerPatient {
                 model.addAttribute("message", "Patient not found.");
                 return "patient_get";
             }
-        }catch (SQLException | IOException e) {
+>>>>>>> nadz
             System.out.println("SQL error in getDoctor "+e.getMessage());
             model.addAttribute("message", "SQL Error."+e.getMessage());
             model.addAttribute("patient", patient);
             return "patient_get";
+=======
+        } catch(IOException e) {
+            model.addAttribute("message", "Invalid input:"+e.getMessage());
+            model.addAttribute("patient", patient);
+            return "patient_get";
         }
-
-    }
-
+>>>>>>> nadz
 
 	/*
 	 * Search for patient by patient id.
@@ -228,8 +222,7 @@ public class ControllerPatient {
 			patient.setPatientId(patientId);
 			try(Connection con = getConnection();){
 				
-				PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id , d.name, d.specialty, d.practice_since "
-						+ "from patient p, doctor d where p.patient_id=?");
+	            PreparedStatement ps = con.prepareStatement("select p.patient_id, p.name, p.dob, p.address, d.doctor_id, d.name, d.specialty, d.practice_since from patient p join doctor d on p.doctor_id = d.doctor_id WHERE p.patient_id = ?");
 				ps.setString(1,patientId);
 				
 				  ResultSet rs = ps.executeQuery();
@@ -277,10 +270,11 @@ public class ControllerPatient {
 		try (Connection con = getConnection();) {
 			
 			 if (!TheSanitizer.isAddress(addy)) throw new IOException(addy + " is not a valid address");
-	            if (!TheSanitizer.isZip(patient.getZipcode())) throw new IOException(patient.getZipcode() + " is not a valid zipcode");
-	            if (!TheSanitizer.isName(patient.getName())) throw new IOException(patient.getName() + " is not a valid name");
-	            
-	            PreparedStatement ps = con.prepareStatement("UPDATE patient set address=?, name=? where patient_id=?");
+	         if (!TheSanitizer.isZip(patient.getZipcode())) throw new IOException(patient.getZipcode() + " is not a valid zipcode");
+	         if (!TheSanitizer.isName(patient.getName())) throw new IOException(patient.getName() + " is not a valid name");
+	         if(!TheSanitizer.isName(patient.getPrimaryName())) throw new IOException(patient.getPrimaryName()+"is not a Primary Physician");
+	         
+	         PreparedStatement ps = con.prepareStatement("update patient,doctor set patient.address=?, doctor.name=? where patient.patient_id=?");
 	            ps.setString(1, addy);
 				ps.setString(2,  patient.getPrimaryName());
 				ps.setString(3,  patient.getPatientId());
