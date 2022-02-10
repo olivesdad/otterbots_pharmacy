@@ -14,9 +14,9 @@ import java.util.Scanner;
 public class DataGenerate {
 
     //USE THESE VARS TO CONNECT TO SERVER
-    public static final String user = "andy";
-    public static final String pw = "olive";
-    public static final String server = "jdbc:mysql://192.168.1.18:3306/pharmacy";
+    public static final String user = "user";
+    public static final String pw = "passwd";
+    public static final String server = "jdbc:mysql://localhost:3306/pharmacy";
 
     //Constants for number of patients, doctors and scripts
     public static final int doctorCount = 10;

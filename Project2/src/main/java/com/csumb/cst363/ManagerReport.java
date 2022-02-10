@@ -5,7 +5,7 @@ public class ManagerReport {
     public static void main(String[] args) {
         // Establish connection to MySQL database
         // Closes connection when try block terminates
-        try (Connection con = DriverManager.getConnection("jdbc:mysql://192.168.1.18:3306/pharmacy", "andy", "olive"); ) {
+        try (Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/pharmacy", "user", "passwd"); ) {
 
             int pharmacyId = 1;
             java.sql.Date startDate = java.sql.Date.valueOf("2022-01-01");
